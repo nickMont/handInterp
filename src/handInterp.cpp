@@ -57,15 +57,13 @@ void viconHand::handCallback(const vicon_interp::handMsg::ConstPtr &msg)
         {handVec0_(ij) = handAvg(ij); initialized=true;}
     }
     else
+    {
         pva_msg.Pos.x = scalefactor_*(handAvg(0)-handVec0_(0));
         pva_msg.Pos.y = scalefactor_*(handAvg(1)-handVec0_(1));
         pva_msg.Pos.z = scalefactor_*(handAvg(2)-handVec0_(2));
         pva_msg.Pos.x = handOrientationAvg(2);
         pvaPub_.publish(pva_msg);
     }
-
-    
-
 }
 
 } //ns

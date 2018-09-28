@@ -22,7 +22,7 @@ private:
     ros::Publisher pvaPub_;
     double scalefactor_;
     int numFingers_;
-    Eigen::Vector3d handVe0_;
+    Eigen::Vector3d handVec0_;
 
 };
 
