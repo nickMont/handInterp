@@ -26,7 +26,7 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS include
-    CATKIN_DEPENDS std_msgs geometry_msgs message_runtime mg_msgs
+    CATKIN_DEPENDS std_msgs geometry_msgs message_runtime mg_msgs vicon
     DEPENDS Eigen
     DEPENDS system_lib
 )
@@ -40,8 +40,10 @@ include_directories(
 add_executable(hand_interp_node src/handMain.cpp src/handInterp.cpp)
 add_executable(vicon_interp_node src/interpMain.cpp src/viconInterp.cpp)
 add_dependencies(vicon_interp_node vicon_hand_generate_messages_cpp)
+add_dependencies(vicon_interp_node vicon_generate_messages_cpp)
 add_dependencies(vicon_interp_node mg_msgs_node_generate_messages_cpp)
 add_dependencies(hand_interp_node vicon_hand_generate_messages_cpp)
+add_dependencies(hand_interp_node vicon_generate_messages_cpp)
 add_dependencies(hand_interp_node mg_msgs_generate_messages_cpp)
 target_link_libraries(vicon_interp_node ${catkin_LIBRARIES})
 target_link_libraries(hand_interp_node ${catkin_LIBRARIES})

@@ -9,12 +9,12 @@ in the .launch file, including the '/'.  If not, the topic matching will fail.*/
 viconHand::viconHand(ros::NodeHandle &nh)
 {
     scalefactor_=0;
-    ros::param::get("hand_interp_node/scalefactor",scalefactor_);
-    ros::param::get("hand_interp_node/numFingers",numFingers_);
+    ros::param::get("hand_to_pva/scalefactor",scalefactor_);
+    ros::param::get("hand_to_pva/numFingers",numFingers_);
     handSub_ = nh.subscribe("/handPoseMsgs",1, &viconHand::handCallback, this,
                 ros::TransportHints().unreliable()); //use UDP to avoid meltdown phenomenon
     pvaPub_ = nh.advertise<mg_msgs::PVA>("px4_control/PVA", 1);
-    ROS_INFO("Node startup complete.");
+    ROS_INFO("Hand to PVA startup complete.");
 
     if(scalefactor_<0.001)
     {ROS_INFO("WARNING: Scale factor is either negative or unset.");}
@@ -58,9 +58,10 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
     }
     else
     {
-        pva_msg.Pos.x = scalefactor_*(handAvg(0)-handVec0_(0));
-        pva_msg.Pos.y = scalefactor_*(handAvg(1)-handVec0_(1));
-        pva_msg.Pos.z = scalefactor_*(handAvg(2)-handVec0_(2));
+        Eigen::Vector3d dv = scalefactor_*(handAvg - handVec0_);
+        pva_msg.Pos.x = dv(0);
+        pva_msg.Pos.y = dv(1);
+        pva_msg.Pos.z = dv(2);
         pva_msg.Pos.x = handOrientationAvg(2);
         pvaPub_.publish(pva_msg);
     }

@@ -1,0 +1,12 @@
+<launch>
+	<arg name="quad_namespace" default="ERR_NO_QUADNAME" />
+	<group>
+		<include file="$(find vicon_hand)/launch/viconI.launch"> 
+			<arg name="quad_namespace" value="$(arg quad_namespace)"/>
+		</include>
+		
+		<include file="$(find vicon_hand)/launch/handI.launch">
+			<arg name="quad_namespace" value="$(arg quad_namespace)"/>
+		</include>
+	</group>
+</launch>

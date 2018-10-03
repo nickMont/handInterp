@@ -10,7 +10,7 @@ in the .launch file, including the '/'.  If not, the topic matching will fail.*/
 viconInterpreter::viconInterpreter(ros::NodeHandle &nh)
 {
     std::vector<std::string> objNames;
-    nh.getParam("topicList", objNames);
+    nh.getParam("vicon_to_hand/topicList", objNames);
 
     // Get size of objNames
     numTopics_ = objNames.size();
@@ -18,20 +18,22 @@ viconInterpreter::viconInterpreter(ros::NodeHandle &nh)
     allTopicNames_.resize(numTopics_);
     for(int ij=0; ij<numTopics_; ij++)
     {
+        allFingerBools_[ij] = false;
         allTopicNames_[ij] = (objNames[ij]).c_str();
         poseSub_[ij] = nh.subscribe(allTopicNames_[ij],10,&viconInterpreter::poseCallback, this,
                 ros::TransportHints().unreliable()); //use UDP to avoid meltdown phenomenon
     }
+    timerPub_ = nh.createTimer(ros::Duration(1.0/20.0), &viconInterpreter::timerCallback, this, false);
     handPosePub_ = nh.advertise<vicon_hand::handMsg>("/handPoseMsgs",10);
-    ROS_INFO("Node startup complete.");
+    ROS_INFO("Vicon to hand startup complete.");
 }
 
 
 /* Callback to record most recent positions for each object.  The MessageEvent syntax is used to allow a
 common callback for all vicon marker topics. */
-void viconInterpreter::poseCallback(const ros::MessageEvent<geometry_msgs::TransformStamped const>& event)
+void viconInterpreter::poseCallback(const ros::MessageEvent<vicon::Subject const>& event)
 {
-	const geometry_msgs::TransformStamped::ConstPtr& msg = event.getMessage();
+	const vicon::Subject::ConstPtr& msg = event.getMessage();
 
     //Get topic name 
     ros::M_string& header = event.getConnectionHeader();
@@ -47,14 +49,16 @@ void viconInterpreter::poseCallback(const ros::MessageEvent<geometry_msgs::Trans
 
     //Find index in array that matches the topic name
     int nk = getIndexMatchingName(publisherName.c_str(), allTopicNames_, numTopics_);
+
+    allFingerBools_[nk] = true;
     
-    objectPositions_[nk](0) = msg->transform.translation.x;
-    objectPositions_[nk](1) = msg->transform.translation.y;
-    objectPositions_[nk](2) = msg->transform.translation.z;
-    objectOrientations_[nk].x() = msg->transform.rotation.x;
-    objectOrientations_[nk].y() = msg->transform.rotation.y;
-    objectOrientations_[nk].z() = msg->transform.rotation.z;
-    objectOrientations_[nk].w() = msg->transform.rotation.w;
+    objectPositions_[nk](0) = msg->position.x;
+    objectPositions_[nk](1) = msg->position.y;
+    objectPositions_[nk](2) = msg->position.z;
+    objectOrientations_[nk].x() = msg->orientation.x;
+    objectOrientations_[nk].y() = msg->orientation.y;
+    objectOrientations_[nk].z() = msg->orientation.z;
+    objectOrientations_[nk].w() = msg->orientation.w;
     lastObserved_[nk] = (msg->header.stamp).toSec();
 
     return;
@@ -65,6 +69,19 @@ void viconInterpreter::poseCallback(const ros::MessageEvent<geometry_msgs::Trans
 data at around 1k Hz.  If wifi is being used, this will induce a meltdown. */
 void viconInterpreter::timerCallback(const ros::TimerEvent &event)
 {
+    static bool initialized(false);
+    if(!initialized)
+    {
+        int numFingersInit;
+        for(int ij=0; ij<numTopics_; ij++)
+        {
+            if(allFingerBools_[ij])
+                {numFingersInit++;}
+        }
+        if(numFingersInit==numTopics_) {initialized=true;}
+        else {return;}
+    }
+
     vicon_hand::handMsg msg;
     msg.tLast.resize(numTopics_);
     msg.poseArray.resize(numTopics_);
@@ -81,6 +98,7 @@ void viconInterpreter::timerCallback(const ros::TimerEvent &event)
         msg.orientationArray[ij].z = objectOrientations_[ij].z();
         msg.orientationArray[ij].w = objectOrientations_[ij].w();
     }
+    handPosePub_.publish(msg);
     return;
 }
 

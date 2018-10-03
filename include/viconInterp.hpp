@@ -4,6 +4,7 @@
 #include <std_msgs/Float64.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/TransformStamped.h>
+#include <vicon/Subject.h>
 #include <Eigen/Geometry>
 #include <vicon_hand/handMsg.h>
 
@@ -14,7 +15,7 @@ class viconInterpreter
 public:
 	viconInterpreter(ros::NodeHandle &nh);
 
-	void poseCallback(const ros::MessageEvent<geometry_msgs::TransformStamped const>& event);
+	void poseCallback(const ros::MessageEvent<vicon::Subject const>& event);
 	void timerCallback(const ros::TimerEvent &event);
 	int getIndexMatchingName(const std::string& stringToMatch, const std::vector<std::string> stringmat, const int listLen);
 
@@ -25,7 +26,9 @@ private:
     Eigen::Quaterniond objectOrientations_[20];
     ros::Subscriber poseSub_[20];
     ros::Publisher handPosePub_;
+    ros::Timer timerPub_;
     double lastObserved_[20];
+    bool allFingerBools_[20];
 
 };
 

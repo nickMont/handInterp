@@ -1,0 +1,9 @@
+<launch>
+    <arg name="quad_namespace"/>
+
+    <node pkg="vicon_hand" type="hand_interp_node" name="hand_to_pva"
+        ns="$(arg quad_namespace)" output="screen">
+            <param name="scalefactor" value="1.5"/>
+            <param name="numFingers" type="int" value="2"/>
+    </node>
+</launch>
