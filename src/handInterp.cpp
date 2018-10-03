@@ -25,7 +25,7 @@ viconHand::viconHand(ros::NodeHandle &nh)
 
 /* Callback to record most recent positions for each object.  The MessageEvent syntax is used to allow a
 common callback for all vicon marker topics. */
-void viconHand::handCallback(const vicon_interp::handMsg::ConstPtr &msg)
+void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
 {
     static bool initialized(false);
     mg_msgs::PVA pva_msg;

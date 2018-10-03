@@ -6,7 +6,7 @@
 #include <geometry_msgs/TransformStamped.h>
 #include <Eigen/Geometry>
 #include <mg_msgs/PVA.h>
-#include <vicon_interp/handMsg.h>
+#include <vicon_hand/handMsg.h>
 
 namespace vicon_hand
 {
@@ -15,7 +15,7 @@ class viconHand
 public:
 	viconHand(ros::NodeHandle &nh);
 
-	void handCallback(const vicon_interp::handMsg::ConstPtr &msg);
+	void handCallback(const vicon_hand::handMsg::ConstPtr &msg);
 
 private:
     ros::Subscriber handSub_;

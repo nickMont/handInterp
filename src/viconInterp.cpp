@@ -22,7 +22,7 @@ viconInterpreter::viconInterpreter(ros::NodeHandle &nh)
         poseSub_[ij] = nh.subscribe(allTopicNames_[ij],10,&viconInterpreter::poseCallback, this,
                 ros::TransportHints().unreliable()); //use UDP to avoid meltdown phenomenon
     }
-    handPosePub_ = nh.advertise<vicon_interp::handMsg>("/handPoseMsgs",10);
+    handPosePub_ = nh.advertise<vicon_hand::handMsg>("/handPoseMsgs",10);
     ROS_INFO("Node startup complete.");
 }
 
@@ -65,7 +65,7 @@ void viconInterpreter::poseCallback(const ros::MessageEvent<geometry_msgs::Trans
 data at around 1k Hz.  If wifi is being used, this will induce a meltdown. */
 void viconInterpreter::timerCallback(const ros::TimerEvent &event)
 {
-    vicon_interp::handMsg msg;
+    vicon_hand::handMsg msg;
     msg.tLast.resize(numTopics_);
     msg.poseArray.resize(numTopics_);
     msg.orientationArray.resize(numTopics_);
