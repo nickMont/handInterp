@@ -20,11 +20,11 @@ viconInterpreter::viconInterpreter(ros::NodeHandle &nh)
     {
         allFingerBools_[ij] = false;
         allTopicNames_[ij] = (objNames[ij]).c_str();
-        poseSub_[ij] = nh.subscribe(allTopicNames_[ij],10,&viconInterpreter::poseCallback, this,
+        poseSub_[ij] = nh.subscribe(allTopicNames_[ij],1,&viconInterpreter::poseCallback, this,
                 ros::TransportHints().unreliable()); //use UDP to avoid meltdown phenomenon
     }
     timerPub_ = nh.createTimer(ros::Duration(1.0/20.0), &viconInterpreter::timerCallback, this, false);
-    handPosePub_ = nh.advertise<vicon_hand::handMsg>("/handPoseMsgs",10);
+    handPosePub_ = nh.advertise<vicon_hand::handMsg>("/handPoseMsgs",1);
     ROS_INFO("Vicon to hand startup complete.");
 }
 
@@ -69,16 +69,18 @@ void viconInterpreter::poseCallback(const ros::MessageEvent<vicon::Subject const
 data at around 1k Hz.  If wifi is being used, this will induce a meltdown. */
 void viconInterpreter::timerCallback(const ros::TimerEvent &event)
 {
+    //Don't publish before receiving messages--mostly a sanity check for rosbags
     static bool initialized(false);
     if(!initialized)
     {
-        int numFingersInit;
+        int numFingersInit(0);
         for(int ij=0; ij<numTopics_; ij++)
         {
             if(allFingerBools_[ij])
-                {numFingersInit++;}
+            {numFingersInit++;}
         }
-        if(numFingersInit==numTopics_) {initialized=true;}
+        if(numFingersInit==numTopics_)
+        {initialized=true;}
         else {return;}
     }
 

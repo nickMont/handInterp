@@ -46,10 +46,11 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
         fingerPointerQuaternion[ij].w() = msg->orientationArray[ij].w;
 
         //Average euler angles
-        handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*fingerPointerQuaternion[ij].toRotationMatrix().eulerAngles(0, 1, 2);
+        handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*(fingerPointerQuaternion[ij].toRotationMatrix()).eulerAngles(0, 1, 2);
 
         handAvg = handAvg + (1.0/numFingers_)*fingerCenterPose[ij];
     }
+
 
     if(!initialized)
     {
@@ -62,7 +63,7 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
         pva_msg.Pos.x = dv(0);
         pva_msg.Pos.y = dv(1);
         pva_msg.Pos.z = dv(2);
-        pva_msg.Pos.x = handOrientationAvg(2);
+        pva_msg.yaw = handOrientationAvg(2);
         pvaPub_.publish(pva_msg);
     }
 }
