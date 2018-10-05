@@ -31,9 +31,9 @@ viconInterpreter::viconInterpreter(ros::NodeHandle &nh)
 
 /* Callback to record most recent positions for each object.  The MessageEvent syntax is used to allow a
 common callback for all vicon marker topics. */
-void viconInterpreter::poseCallback(const ros::MessageEvent<vicon::Subject const>& event)
+void viconInterpreter::poseCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event)
 {
-	const vicon::Subject::ConstPtr& msg = event.getMessage();
+	const nav_msgs::Odometry::ConstPtr& msg = event.getMessage();
 
     //Get topic name 
     ros::M_string& header = event.getConnectionHeader();
@@ -52,13 +52,13 @@ void viconInterpreter::poseCallback(const ros::MessageEvent<vicon::Subject const
 
     allFingerBools_[nk] = true;
     
-    objectPositions_[nk](0) = msg->position.x;
-    objectPositions_[nk](1) = msg->position.y;
-    objectPositions_[nk](2) = msg->position.z;
-    objectOrientations_[nk].x() = msg->orientation.x;
-    objectOrientations_[nk].y() = msg->orientation.y;
-    objectOrientations_[nk].z() = msg->orientation.z;
-    objectOrientations_[nk].w() = msg->orientation.w;
+    objectPositions_[nk](0) = msg->pose.pose.position.x;
+    objectPositions_[nk](1) = msg->pose.pose.position.y;
+    objectPositions_[nk](2) = msg->pose.pose.position.z;
+    objectOrientations_[nk].x() = msg->pose.pose.orientation.x;
+    objectOrientations_[nk].y() = msg->pose.pose.orientation.y;
+    objectOrientations_[nk].z() = msg->pose.pose.orientation.z;
+    objectOrientations_[nk].w() = msg->pose.pose.orientation.w;
     lastObserved_[nk] = (msg->header.stamp).toSec();
 
     return;

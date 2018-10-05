@@ -2,6 +2,7 @@
 
 #include <ros/ros.h>
 #include <std_msgs/Float64.h>
+#include <nav_msgs/Odometry.h>
 #include <geometry_msgs/Pose.h>
 #include <geometry_msgs/TransformStamped.h>
 #include <vicon/Subject.h>
@@ -15,7 +16,7 @@ class viconInterpreter
 public:
 	viconInterpreter(ros::NodeHandle &nh);
 
-	void poseCallback(const ros::MessageEvent<vicon::Subject const>& event);
+	void poseCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
 	void timerCallback(const ros::TimerEvent &event);
 	int getIndexMatchingName(const std::string& stringToMatch, const std::vector<std::string> stringmat, const int listLen);
 

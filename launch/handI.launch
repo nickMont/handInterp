@@ -2,6 +2,6 @@
     <node pkg="vicon_hand" type="hand_interp_node" name="hand_to_pva" output="screen">
             <param name="scalefactor" value="1.5"/>
             <param name="numFingers" type="int" value="2"/>
-            <rosparam param="quadList"> ["phoenix","gryphon"] </rosparam>
+            <rosparam param="quadList"> ["Hippogryph2","Gryphon2"] </rosparam>
     </node>
 </launch>

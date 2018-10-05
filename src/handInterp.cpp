@@ -19,13 +19,16 @@ viconHand::viconHand(ros::NodeHandle &nh)
 
     handSub_ = nh.subscribe("/handPoseMsgs",1, &viconHand::handCallback, this,
                 ros::TransportHints().unreliable()); //use UDP to avoid meltdown phenomenon
-    for(int ij=0; ij++; ij<numQuads_)
+    ROS_INFO("Preparing for lOop with %d iterations", numQuads_);
+    for(int ij=0; ij<numQuads_; ij++)
     {
+        ROS_INFO("%d th iteration",ij);
         hasInitPos_[ij] = false;
         quadTopics_[ij] = (quadList[ij]+"/local_odom").c_str();
         pvaPub_[ij] = nh.advertise<mg_msgs::PVA>("px4_control/PVA", 1);
         quadPoseSub_[ij] = nh.subscribe(quadTopics_[ij],1,&viconHand::poseCallback, this,
                 ros::TransportHints().unreliable());
+        ROS_INFO("%s subscriber created",quadTopics_[ij].c_str());
     }
 
     ROS_INFO("Hand to PVA startup complete.");
