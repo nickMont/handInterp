@@ -19,13 +19,11 @@ viconHand::viconHand(ros::NodeHandle &nh)
 
     handSub_ = nh.subscribe("/handPoseMsgs",1, &viconHand::handCallback, this,
                 ros::TransportHints().unreliable()); //use UDP to avoid meltdown phenomenon
-    ROS_INFO("Preparing for lOop with %d iterations", numQuads_);
     for(int ij=0; ij<numQuads_; ij++)
     {
-        ROS_INFO("%d th iteration",ij);
         hasInitPos_[ij] = false;
-        quadTopics_[ij] = (quadList[ij]+"/local_odom").c_str();
-        pvaPub_[ij] = nh.advertise<mg_msgs::PVA>("px4_control/PVA", 1);
+        quadTopics_[ij] = ("/"+quadList[ij]+"/local_odom").c_str();
+        pvaPub_[ij] = nh.advertise<mg_msgs::PVA>(quadList[ij]+"/px4_control/PVA_Ref", 1);
         quadPoseSub_[ij] = nh.subscribe(quadTopics_[ij],1,&viconHand::poseCallback, this,
                 ros::TransportHints().unreliable());
         ROS_INFO("%s subscriber created",quadTopics_[ij].c_str());
@@ -53,6 +51,7 @@ void viconHand::poseCallback(const ros::MessageEvent<nav_msgs::Odometry const>& 
 
     if(!hasInitPos_[nk])
     {
+        ROS_INFO("Quad initialized on topic %s",publisherName.c_str());
         initPos_[nk](0) = msg->pose.pose.position.x;
         initPos_[nk](1) = msg->pose.pose.position.y;
         initPos_[nk](2) = msg->pose.pose.position.z;
@@ -69,25 +68,28 @@ common callback for all vicon marker topics. */
 void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
 {
     static bool initialized(false);
+    static double twoPi(8.0*atan(1.0));
     mg_msgs::PVA pva_msg;
 
     Eigen::Vector3d fingerCenterPose[numFingers_];
-    Eigen::Quaterniond fingerPointerQuaternion[numFingers_];
     Eigen::Vector3d handAvg;
-    Eigen::Vector3d handOrientationAvg;
+    double handOrientationAvg;
+    Eigen::Vector3d thisEuler;
+    double qx, qy, qz, qw, thisyaw;
 
     for(int ij=0; ij<numFingers_; ij++)
     {
         fingerCenterPose[ij](0) = msg->poseArray[ij].x;
         fingerCenterPose[ij](1) = msg->poseArray[ij].y;
         fingerCenterPose[ij](2) = msg->poseArray[ij].z;
-        fingerPointerQuaternion[ij].x() = msg->orientationArray[ij].x;
-        fingerPointerQuaternion[ij].y() = msg->orientationArray[ij].y;
-        fingerPointerQuaternion[ij].z() = msg->orientationArray[ij].z;
-        fingerPointerQuaternion[ij].w() = msg->orientationArray[ij].w;
+        qx = msg->orientationArray[ij].x;
+        qy = msg->orientationArray[ij].y;
+        qz = msg->orientationArray[ij].z;
+        qw = msg->orientationArray[ij].w;        
 
         //Average euler angles
-        handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*(fingerPointerQuaternion[ij].toRotationMatrix()).eulerAngles(0, 1, 2);
+        thisyaw = atan2(2.0*(qy*qz + qw*qx), qw*qw - qx*qx - qy*qy + qz*qz);
+        handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*thisyaw;
 
         handAvg = handAvg + (1.0/numFingers_)*fingerCenterPose[ij];
     }
@@ -95,6 +97,7 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
 
     if(!initialized)
     {
+        ROS_INFO("Hand calibrated");
         for(int ij=0;ij<3;ij++)
         {handVec0_(ij) = handAvg(ij); initialized=true;}
     }
@@ -110,7 +113,7 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
                 pva_msg.Pos.x = thisPos(0);
                 pva_msg.Pos.y = thisPos(1);
                 pva_msg.Pos.z = thisPos(2);
-                pva_msg.yaw = handOrientationAvg(2);
+                pva_msg.yaw = handOrientationAvg;
                 pvaPub_[ij].publish(pva_msg);
             }
         }

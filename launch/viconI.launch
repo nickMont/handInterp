@@ -1,7 +1,5 @@
 <launch>
-    <arg name="quad_namespace"/>
-
     <node pkg="vicon_hand" type="vicon_interp_node" name="vicon_to_hand" output="screen">
-            <rosparam param="topicList"> ["FingerTwo/local_odom","FingerFour/local_odom"] </rosparam>
+            <rosparam param="topicList"> ["/Finger2/local_odom","/Finger4/local_odom"] </rosparam>
     </node>
 </launch>
