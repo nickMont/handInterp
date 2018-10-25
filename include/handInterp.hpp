@@ -21,6 +21,8 @@ public:
 		const std::vector<std::string> stringmat, const int listLen);
 	void poseCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
 private:
     ros::Subscriber handSub_, quadPoseSub_[20];
     ros::Publisher pvaPub_[20];
@@ -31,6 +33,5 @@ private:
     bool hasInitPos_[20];
 
 };
-
 } //end namespace
 

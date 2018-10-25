@@ -69,13 +69,16 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
 {
     static bool initialized(false);
     static double twoPi(8.0*atan(1.0));
+    static double onePi(4.0*atan(1.0));
     mg_msgs::PVA pva_msg;
 
-    Eigen::Vector3d fingerCenterPose[numFingers_];
-    Eigen::Vector3d handAvg;
-    double handOrientationAvg;
-    Eigen::Vector3d thisEuler;
-    double qx, qy, qz, qw, thisyaw;
+    Eigen::Vector3d fingerCenterPose[numFingers_],  handAvg;
+    double qx, qy, qz, qw, thisyaw, handOrientationAvg;
+    int numNearWraparound = 0;
+    Eigen::MatrixXd yawStore;
+    //must dynamically resize because numFingers_ isn't known at compile time
+    yawStore.resize(numFingers_,1);
+
 
     for(int ij=0; ij<numFingers_; ij++)
     {
@@ -89,10 +92,28 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
 
         //Average euler angles
         thisyaw = atan2(2.0*(qy*qz + qw*qx), qw*qw - qx*qx - qy*qy + qz*qz);
-        handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*thisyaw;
+        yawStore(ij) = thisyaw;
+	    
+        if((thisyaw>onePi-0.15) || (thisyaw<onePi+0.15))
+        {numNearWraparound++;}
 
         handAvg = handAvg + (1.0/numFingers_)*fingerCenterPose[ij];
     }
+
+
+    //Add 2pi to yaw values near -pi
+    if(numNearWraparound==numFingers_)
+    {
+        for(int ij=0;ij<numFingers_; ij++)
+        {
+            if(yawStore(ij)<0)
+            {yawStore(ij)=yawStore(ij)+twoPi;}
+        }
+    }
+    handOrientationAvg = 0;
+    //Cannot take .mean() at compile time due to resizing
+    for(int ij=0;ij<numFingers_; ij++)
+    {handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*yawStore(ij);}
 
 
     if(!initialized)

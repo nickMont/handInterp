@@ -20,6 +20,8 @@ public:
 	void timerCallback(const ros::TimerEvent &event);
 	int getIndexMatchingName(const std::string& stringToMatch, const std::vector<std::string> stringmat, const int listLen);
 
+    EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
+
 private:
     std::vector<std::string> allTopicNames_;
     int numTopics_;
@@ -32,6 +34,5 @@ private:
     bool allFingerBools_[20];
 
 };
-
 } //end namespace
 
