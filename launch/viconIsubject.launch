@@ -1,6 +1,6 @@
 <launch>
     <node pkg="vicon_hand" type="vicon_interp_node" name="vicon_to_hand" output="screen">
-            <rosparam param="topicList"> ["/pointer/local_odom","/pinky/local_odom"] </rosparam>
+            <rosparam param="topicList"> ["/vicon/Finger2","/vicon/Finger4"] </rosparam>
             <rosparam param="useSubjectInsteadOfOdom"> type="bool" value="true" </rosparam>
     </node>
 </launch>

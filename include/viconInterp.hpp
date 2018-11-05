@@ -8,6 +8,7 @@
 #include <vicon/Subject.h>
 #include <Eigen/Geometry>
 #include <vicon_hand/handMsg.h>
+#include <vicon/Subject.h>
 
 namespace vicon_hand
 {
@@ -17,6 +18,7 @@ public:
 	viconInterpreter(ros::NodeHandle &nh);
 
 	void poseCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
+    void subjectCallback(const ros::MessageEvent<vicon::Subject const>& event);
 	void timerCallback(const ros::TimerEvent &event);
 	int getIndexMatchingName(const std::string& stringToMatch, const std::vector<std::string> stringmat, const int listLen);
 

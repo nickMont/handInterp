@@ -1,0 +1,7 @@
+<launch>
+	<group>
+		<include file="$(find vicon_hand)/launch/viconIsubject.launch"> </include>
+		
+		<include file="$(find vicon_hand)/launch/handI.launch"> </include>
+	</group>
+</launch>

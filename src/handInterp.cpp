@@ -22,7 +22,7 @@ viconHand::viconHand(ros::NodeHandle &nh)
     for(int ij=0; ij<numQuads_; ij++)
     {
         hasInitPos_[ij] = false;
-        quadTopics_[ij] = ("/"+quadList[ij]+"/local_odom").c_str();
+        quadTopics_[ij] = ("/"+quadList[ij]+"/WRW/local_odom").c_str();
         pvaPub_[ij] = nh.advertise<mg_msgs::PVA>(quadList[ij]+"/px4_control/PVA_Ref", 1);
         quadPoseSub_[ij] = nh.subscribe(quadTopics_[ij],1,&viconHand::poseCallback, this,
                 ros::TransportHints().unreliable());
