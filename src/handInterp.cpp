@@ -22,7 +22,7 @@ viconHand::viconHand(ros::NodeHandle &nh)
     for(int ij=0; ij<numQuads_; ij++)
     {
         hasInitPos_[ij] = false;
-        quadTopics_[ij] = ("/"+quadList[ij]+"/WRW/local_odom").c_str();
+        quadTopics_[ij] = ("/"+quadList[ij]+"/local_odom").c_str();
         pvaPub_[ij] = nh.advertise<mg_msgs::PVA>(quadList[ij]+"/px4_control/PVA_Ref", 1);
         quadPoseSub_[ij] = nh.subscribe(quadTopics_[ij],1,&viconHand::poseCallback, this,
                 ros::TransportHints().unreliable());
@@ -94,7 +94,7 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
         thisyaw = atan2(2.0*(qy*qz + qw*qx), qw*qw - qx*qx - qy*qy + qz*qz);
         yawStore(ij) = thisyaw;
 	    
-        if((thisyaw>onePi-0.15) || (thisyaw<onePi+0.15))
+        if((thisyaw>onePi-0.25) || (thisyaw<-onePi+0.25))
         {numNearWraparound++;}
 
         handAvg = handAvg + (1.0/numFingers_)*fingerCenterPose[ij];
@@ -110,11 +110,10 @@ void viconHand::handCallback(const vicon_hand::handMsg::ConstPtr &msg)
             {yawStore(ij)=yawStore(ij)+twoPi;}
         }
     }
-    handOrientationAvg = 0;
+    handOrientationAvg = 0.0;
     //Cannot take .mean() at compile time due to resizing
     for(int ij=0;ij<numFingers_; ij++)
     {handOrientationAvg = handOrientationAvg + (1.0/numFingers_)*yawStore(ij);}
-
 
     if(!initialized)
     {
