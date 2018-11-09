@@ -19,7 +19,7 @@ public:
 	void handCallback(const vicon_hand::handMsg::ConstPtr &msg);
 	int getIndexMatchingName(const std::string& stringToMatch, 
 		const std::vector<std::string> stringmat, const int listLen);
-	void poseCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
+	void poseOdomCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
 
     EIGEN_MAKE_ALIGNED_OPERATOR_NEW;
 
