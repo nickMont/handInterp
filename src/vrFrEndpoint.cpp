@@ -110,27 +110,27 @@ int main(int argc, char *argv[])
   		{
 
   			//Convert hand[] from buffer into ros message
-  			vicon_hand::handMsg derp;
+  			vicon_hand::handMsg gloveToHandMsg;
   			int nL=(sizeof(buffer)/sizeof(*buffer));
-  			//convention: n=7*f, where f is the number of fingers.
+  			//convention: n=7*f+1, where f is the number of fingers. The first element is the timestamp.
   			//elements 0:2 of each of the f fingers are pose, 3:6 are quaternion as (xyzw)		
   			int nf=nL/7;
-  			derp.poseArray.resize(nf);
-  			derp.orientationArray.resize(nf);
-  			derp.tLast.resize(nf);
+  			gloveToHandMsg.poseArray.resize(nf);
+  			gloveToHandMsg.orientationArray.resize(nf);
+  			gloveToHandMsg.tLast.resize(nf);
   			float tcurr=(ros::Time::now()).toSec();
   			for(int ij=0; ij++; ij<nf)
   			{
-  				derp.tLast[ij]=tcurr;
-  				derp.poseArray[ij].x=buffer[0+ij*7];
-  				derp.poseArray[ij].y=buffer[1+ij*7];
-  				derp.poseArray[ij].z=buffer[2+ij*7];
-  				derp.orientationArray[ij].x=buffer[3+ij*7];
-  				derp.orientationArray[ij].y=buffer[4+ij*7];
-  				derp.orientationArray[ij].z=buffer[5+ij*7];
-  				derp.orientationArray[ij].w=buffer[6+ij*7];
+  				gloveToHandMsg.tLast[ij]=tcurr;
+  				gloveToHandMsg.poseArray[ij].x=buffer[1+ij*7];
+  				gloveToHandMsg.poseArray[ij].y=buffer[2+ij*7];
+  				gloveToHandMsg.poseArray[ij].z=buffer[3+ij*7];
+  				gloveToHandMsg.orientationArray[ij].x=buffer[4+ij*7];
+  				gloveToHandMsg.orientationArray[ij].y=buffer[5+ij*7];
+  				gloveToHandMsg.orientationArray[ij].z=buffer[6+ij*7];
+  				gloveToHandMsg.orientationArray[ij].w=buffer[7+ij*7];
   			}
-  			hand_pub.publish(derp);
+  			hand_pub.publish(gloveToHandMsg);
    		}
    		if (n < 0) {
   			perror("Read error");
