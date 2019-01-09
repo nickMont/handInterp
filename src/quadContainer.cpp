@@ -17,13 +17,13 @@ void quadContainer::configure(const int nk)
 }
 
 
-void quadContainer::setName(const string quadname)
+void quadContainer::setName(const std::string quadname)
 {
 	quadName_ = quadname;
 }
 
 
-void quadContainer::setOdom(const nav_msgs::Odometry &msg)
+void quadContainer::odomCallback(const nav_msgs::Odometry &msg)
 {
 	lastOdom_ = msg;
 	lastPos_(0) = lastOdom_.pose.pose.position.x;
@@ -36,9 +36,24 @@ void quadContainer::setOdom(const nav_msgs::Odometry &msg)
 }
 
 
+void quadContainer::setInitPos(const Eigen::Vector3d &pos)
+{
+	lastPos_(0) = lastOdom_.pose.pose.position.x;
+	lastPos_(1) = lastOdom_.pose.pose.position.y;
+	lastPos_(2) = lastOdom_.pose.pose.position.z;
+	initPos_ = lastPos_;
+}
+
+
 Eigen::Vector3d quadContainer::getPos()
 {
 	return lastPos_;
+}
+
+
+Eigen::Vector3d quadContainer::getInitPos()
+{
+	return initPos_;
 }
 
 
@@ -54,7 +69,7 @@ nav_msgs::Odometry quadContainer::getOdom()
 }
 
 
-string quadContainer::getName()
+std::string quadContainer::getName()
 {
 	return quadName_;
 }

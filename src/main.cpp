@@ -45,7 +45,16 @@ int main(int argc, char **argv)
     auto handSub = std::make_shared<handIn::handEndpoint>();
     //Converts hand+pose->gesture
     auto commandGenerator = std::make_shared<handIn::commander>();
-
+    
+    int sourceForHandData, sourceForGestureData;
+    std::string topic, gestureTopic;
+    hTopic = "5555";
+    gTopic = "5555";
+    ros::param::get(ros::this_node::getName()+"/sourceForHandData",sourceForHandData);
+    ros::param::get(ros::this_node::getName()+"/topicOrPortNumber",hTopic);
+    ros::param::get(ros::this_node::getName()+"/useGestureNN",sourceForGestureData);
+    ros::param::get(ros::this_node::getName()+"/topicOrPortNumberGesture",gTopic);
+    handEndpoint->configure(useRosInsteadOfPort, hTopic, useRosForGestureSource, gTopic);
     poseSubs->configure();
 
     //read in numquads

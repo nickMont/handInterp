@@ -31,8 +31,6 @@ private:
 	bool hasInitPose_[10], hasPointer_[10];
 	ros::nodeHandle nh_;
 	int numQuads_;
-
-
 };
 
 }

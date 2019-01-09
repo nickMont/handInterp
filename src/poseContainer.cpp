@@ -33,7 +33,7 @@ void poseContainer::setQuadPointer(const int ij, std::shared_ptr<handIn::quadCon
 
 
 //only create subscribers that are needed
-void poseContainer::createPoseSub(const int ij, const string quadname)
+void poseContainer::createPoseSub(const int ij, const std::string quadname)
 {
 	quadPoseSubs_[ij] = nh.subscribe("/"+quadname+"/WRW/local_odom",10,&poseContainer::poseEventCallback,
 		  this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
