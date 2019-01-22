@@ -19,6 +19,7 @@ public:
 	void configure();
 	void setQuadPointer(std::shared_ptr<handIn::quadContainer> quadptr);
 	void createPoseSub (const int ij, const string quadname);
+	bool hasData(const int index);
 
 private:
 	void poseEventCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);

@@ -8,6 +8,7 @@ namespace handIn
 quadContainer::quadContainer(ros::NodeHandle &nh)
 {
 	nh_ = &nh;
+	hasPose_=false;
 }
 
 
@@ -25,6 +26,7 @@ void quadContainer::setName(const std::string quadname)
 
 void quadContainer::odomCallback(const nav_msgs::Odometry &msg)
 {
+	hasPose_ = true;
 	lastOdom_ = msg;
 	lastPos_(0) = lastOdom_.pose.pose.position.x;
 	lastPos_(1) = lastOdom_.pose.pose.position.y;
@@ -72,6 +74,12 @@ nav_msgs::Odometry quadContainer::getOdom()
 std::string quadContainer::getName()
 {
 	return quadName_;
+}
+
+
+bool quadContainer::getStatus()
+{
+	return hasPose_;
 }
 
 

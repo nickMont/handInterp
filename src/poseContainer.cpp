@@ -72,6 +72,12 @@ void poseContainer::poseEventCallback(const ros::MessageEvent<nav_msgs::Odometry
 }
 
 
+bool poseContainer::hasData(const int index)
+{
+  return hasInitPos_[index]
+}
+
+
 //get index of quadPointer from ros subscriber name to match objects in MessageEvent callback
 int poseContainer::getIndexMatchingName(const std::string& stringToMatch, 
         const std::vector<std::string>& stringmat, const int listLen)

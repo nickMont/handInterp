@@ -22,6 +22,7 @@ public:
 	Eigen::Quaterniond getQuat();
 	nav_msgs::Odometry getOdom();
 	string getName();
+	bool getStatus();
 
 
 private:
@@ -31,6 +32,7 @@ private:
 	Eigen::Quaterniond lastQuat_;
 	int quadIntIndex_;
 	std::string quadName_;
+	bool hasPose_;
 };
 
 }

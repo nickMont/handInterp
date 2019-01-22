@@ -1,14 +1,8 @@
-#pragma once
 #include handEndpoint.hpp
 
 
 namespace handIn
 {
-
-
-//CREATE CUSTOM EIGEN CLASS HERE
-struct Eigen14d
-{Eigen14d};
 
 handEndpoint::handEndpoint(ros::NodeHandle &nh)
 {
@@ -67,7 +61,7 @@ void handEndpoint::setCommanderPtr(std::shared_ptr<handIn::commander> commptr)
 }
 
 
-void handEndpoint::handAction(const float &datmat)
+void handEndpoint::handAction(const float &datmat[])
 {
 	lastTProc_ = getRosTime();
 	if(hasCommander_)
