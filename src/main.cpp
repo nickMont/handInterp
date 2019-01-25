@@ -1,12 +1,10 @@
 #include <Eigen/Geometry>
-#include "estimationNode.hpp"
-#include "gbxStreamEndpointGPSKF.hpp"
-#include "rosStreamEndpointGPSKF.hpp"
-#include "rosPlayback.hpp"
-#include "viconStream.hpp"
+#include "commander.hpp"
+#include "poseContainer.hpp"
+#include "quadContainer.hpp"
+#include "handEndpoint.hpp"
 #include <string>
 #include <iostream>
-#include "mathHelperFunctions.hpp"
 
 const char strSIGTERM[] = "SIGTERM";
 const char strSIGINT[] = "SIGINT";

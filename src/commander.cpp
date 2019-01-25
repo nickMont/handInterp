@@ -28,8 +28,11 @@ void commander::getGestureList(const std::string &filename)
 	//file reader goes here <<>>
 
 	
-	nrow = dat(0);
-	gesturePairings.resize(nrow,3);
+	int nrow = dat(0);
+	gesturePairingsRight_.resize(nrow,2);
+	gesturePairingsLeft_.resize(nrow,2);
+
+	gesturePairingsLeft_ = gesturePairingsRight_;
 }
 
 
@@ -65,7 +68,6 @@ void commander::statusTimerCallback(const ros::TimerEvent &event)
     	isGreen_=allTrue;
 	}
 	// ^ can be done in first loop but splitting it out makes it easier to read
-
 	return;
 }
 
@@ -86,8 +88,9 @@ void commander::setQuadPointer(const std::string &name, std::shared_ptr<handIn::
 }
 
 
-void commander::sendHand(const float &handData[55])
+void commander::sendHand(const double &handData[55])
 {
+	hand_ = handData;
 	int rGest = round(handData[53]);
 	int lGest = round(handData[54]);
 	matchAndPerformAction(rGest, lGest);
@@ -96,7 +99,11 @@ void commander::sendHand(const float &handData[55])
 
 void commander::matchAndPerformAction(int rR, int lL)
 {
+	int indexOfRightGest, indexOfLeftGest;
+	indexOfRightGest = findIndexInList(rR,gesturePairingsRight_,0);
+	indexOfLeftGest = findIndexInList(rR,gesturePairingsLeft_,0);
 
+	//call commandgenerator here
 }
 
 
@@ -115,6 +122,18 @@ int commander::getIndexMatchingName(const std::string& stringToMatch,
     }
 
     return nn;
+}
+
+
+int commander::findIndexInList(int match, const Eigen::MatrixXd &ref, const int colno)
+{
+	int a = ref.rows();
+	for(int ij=0; ij<a; ij++)
+	{
+		if(match==ref(ij,colno))
+		{return ij;}
+	}
+	return -1;
 }
 
 

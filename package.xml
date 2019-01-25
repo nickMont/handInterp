@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>vicon_hand</name>
+  <name>hand_endpoint</name>
   <version>0.0.0</version>
   <description>The vicon_interp package</description>
 

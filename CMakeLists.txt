@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(vicon_hand)
+project(hand_endpoint)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -Wno-format-security -Wno-literal-suffix -DCATKIN_BUILD")
 add_definitions(-std=c++98)
@@ -17,6 +17,8 @@ find_package(Eigen REQUIRED)
 add_message_files(
   FILES
   handMsg.msg
+  oneHand.msg
+  hands.msg
 )
 
 generate_messages(
@@ -27,7 +29,7 @@ generate_messages(
 
 catkin_package(
     INCLUDE_DIRS include
-    CATKIN_DEPENDS std_msgs geometry_msgs message_runtime mg_msgs vicon
+    CATKIN_DEPENDS std_msgs geometry_msgs message_runtime mg_msgs nav_msgs
     DEPENDS Eigen
     DEPENDS system_lib
 )
@@ -38,16 +40,7 @@ include_directories(
   ${Eigen_INCLUDE_DIRS}
 )
 
-add_executable(hand_interp_node src/handMain.cpp src/handInterp.cpp)
-add_executable(vicon_interp_node src/interpMain.cpp src/viconInterp.cpp)
-add_executable(vr_endpoint_node src/vrFrEndpoint.cpp)
-add_dependencies(vicon_interp_node vicon_hand_generate_messages_cpp)
-add_dependencies(vicon_interp_node vicon_generate_messages_cpp)
-add_dependencies(vicon_interp_node mg_msgs_node_generate_messages_cpp)
-add_dependencies(hand_interp_node vicon_hand_generate_messages_cpp)
-add_dependencies(hand_interp_node vicon_generate_messages_cpp)
-add_dependencies(hand_interp_node mg_msgs_generate_messages_cpp)
-add_dependencies(vr_endpoint_node vicon_hand_generate_messages_cpp)
-target_link_libraries(vicon_interp_node ${catkin_LIBRARIES})
-target_link_libraries(hand_interp_node ${catkin_LIBRARIES})
-target_link_libraries(vr_endpoint_node ${catkin_LIBRARIES})
+add_executable(hand_endpoint_node src/main.cpp src/commander.cpp src/commanderActions.cpp src/poseContainer.cpp src/quadContainer.cpp src/handEndpoint.cpp)
+add_dependencies(hand_endpoint_node mg_msgs_node_generate_messages_cpp)
+add_dependencies(hand_endpoint_node hand_endpoint_generate_messages_cpp)
+target_link_libraries(hand_endpoint_node ${catkin_LIBRARIES})

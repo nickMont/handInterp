@@ -195,7 +195,7 @@ void handEndpoint::createPipeAndSpin(const int PORT)
 }
 
 
-void handEndpoint::handCallback(const hand_endpoint::hand::ConstPtr &msg)
+void handEndpoint::handCallback(const hand_endpoint::hands::ConstPtr &msg)
 {
 	if(hasHandCenter_[0] && hasHandCenter_[1])
 	{
@@ -204,49 +204,49 @@ void handEndpoint::handCallback(const hand_endpoint::hand::ConstPtr &msg)
 	handFull[ 0] = (msg->header.stamp).toSec();
 	handFull[ 1] = 1;
 	//quaternion describing each finger
-	handFull[ 2] = msg->right.hand.thumb.x;
-	handFull[ 3] = msg->right.hand.thumb.y;
-	handFull[ 4] = msg->right.hand.thumb.z;
-	handFull[ 5] = msg->right.hand.thumb.w;
-	handFull[ 6] = msg->right.hand.point.x;
-	handFull[ 7] = msg->right.hand.point.y;
-	handFull[ 8] = msg->right.hand.point.z;
-	handFull[ 9] = msg->right.hand.point.w;
-	handFull[10] = msg->right.hand.middle.x;
-	handFull[11] = msg->right.hand.middle.y;
-	handFull[12] = msg->right.hand.middle.z;
-	handFull[13] = msg->right.hand.middle.w;
-	handFull[14] = msg->right.hand.index.x;
-	handFull[15] = msg->right.hand.index.y;
-	handFull[16] = msg->right.hand.index.z;
-	handFull[17] = msg->right.hand.index.w;
-	handFull[18] = msg->right.hand.pinky.x;
-	handFull[19] = msg->right.hand.pinky.y;
-	handFull[20] = msg->right.hand.pinky.z;
-	handFull[21] = msg->right.hand.pinky.w;
+	handFull[ 2] = msg->right.thumb.x;
+	handFull[ 3] = msg->right.thumb.y;
+	handFull[ 4] = msg->right.thumb.z;
+	handFull[ 5] = msg->right.thumb.w;
+	handFull[ 6] = msg->right.point.x;
+	handFull[ 7] = msg->right.point.y;
+	handFull[ 8] = msg->right.point.z;
+	handFull[ 9] = msg->right.point.w;
+	handFull[10] = msg->right.middle.x;
+	handFull[11] = msg->right.middle.y;
+	handFull[12] = msg->right.middle.z;
+	handFull[13] = msg->right.middle.w;
+	handFull[14] = msg->right.index.x;
+	handFull[15] = msg->right.index.y;
+	handFull[16] = msg->right.index.z;
+	handFull[17] = msg->right.index.w;
+	handFull[18] = msg->right.pinky.x;
+	handFull[19] = msg->right.pinky.y;
+	handFull[20] = msg->right.pinky.z;
+	handFull[21] = msg->right.pinky.w;
 
 	//left hand
-	handFull[22] = 1;
-	handFull[23] = msg->left.hand.thumb.x;
-	handFull[24] = msg->left.hand.thumb.y;
-	handFull[25] = msg->left.hand.thumb.z;
-	handFull[26] = msg->left.hand.thumb.w;
-	handFull[27] = msg->left.hand.point.x;
-	handFull[28] = msg->left.hand.point.y;
-	handFull[29] = msg->left.hand.point.z;
-	handFull[30] = msg->left.hand.point.w;
-	handFull[31] = msg->left.hand.middle.x;
-	handFull[32] = msg->left.hand.middle.y;
-	handFull[33] = msg->left.hand.middle.z;
-	handFull[34] = msg->left.hand.middle.w;
-	handFull[35] = msg->left.hand.index.x;
-	handFull[36] = msg->left.hand.index.y;
-	handFull[37] = msg->left.hand.index.z;
-	handFull[38] = msg->left.hand.index.w;
-	handFull[39] = msg->left.hand.pinky.x;
-	handFull[40] = msg->left.hand.pinky.y;
-	handFull[41] = msg->left.hand.pinky.z;
-	handFull[42] = msg->left.hand.pinky.w;
+	handFull[22] = 0;
+	handFull[23] = msg->left.thumb.x;
+	handFull[24] = msg->left.thumb.y;
+	handFull[25] = msg->left.thumb.z;
+	handFull[26] = msg->left.thumb.w;
+	handFull[27] = msg->left.point.x;
+	handFull[28] = msg->left.point.y;
+	handFull[29] = msg->left.point.z;
+	handFull[30] = msg->left.point.w;
+	handFull[31] = msg->left.middle.x;
+	handFull[32] = msg->left.middle.y;
+	handFull[33] = msg->left.middle.z;
+	handFull[34] = msg->left.middle.w;
+	handFull[35] = msg->left.index.x;
+	handFull[36] = msg->left.index.y;
+	handFull[37] = msg->left.index.z;
+	handFull[38] = msg->left.index.w;
+	handFull[39] = msg->left.pinky.x;
+	handFull[40] = msg->left.pinky.y;
+	handFull[41] = msg->left.pinky.z;
+	handFull[42] = msg->left.pinky.w;
 
 	if(!gestureInput_)
 	{
