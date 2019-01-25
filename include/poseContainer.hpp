@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <nag_msgs/odometry.h>
+#include <nav_msgs/Odometry.h>
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -15,7 +15,7 @@ class quadContainer;
 class poseContainer
 {
 public:
-	poseContainer(ros::nodeHandle &nh);
+	poseContainer(ros::NodeHandle &nh);
 	void configure();
 	void setQuadPointer(std::shared_ptr<handIn::quadContainer> quadptr);
 	void createPoseSub (const int ij, const string quadname);
@@ -30,7 +30,7 @@ private:
 	std::string namebox_[10];
 	ros::Subscriber quadPoseSubs_[10];
 	bool hasInitPose_[10], hasPointer_[10];
-	ros::nodeHandle nh_;
+	ros::NodeHandle nh_;
 	int numQuads_;
 };
 

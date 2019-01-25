@@ -1,18 +1,19 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <nag_msgs/odometry.h>
+#include <nav_msgs/Odometry.h>
 #include <cmath>
 #include <string>
 #include <iostream>
 #include <Eigen/Geometry>
+
 
 namespace handIn
 {
 class quadContainer
 {
 public:
-	quadContainer(ros::nodeHandle &nh);
+	quadContainer(ros::NodeHandle &nh);
 	void configure();
 	void setName(const string quadname);
 	void odomCallback(const nav_msgs::Odometry &msg);
@@ -26,7 +27,7 @@ public:
 
 
 private:
-	ros::nodeHandle nh_;
+	ros::NodeHandle nh_;
 	nav_msgs::Odometry lastOdom_;
 	Eigen::Vector3d lastPos_, initPos_;
 	Eigen::Quaterniond lastQuat_;

@@ -1,15 +1,15 @@
-#include commander.hpp
-
+#include "commander.hpp"
 
 namespace handIn
 {
-	
-
 Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const double omega, const double turnRadius)
 {
 	if(!isGreen_)
-	{return 0;}
+	{return Eigen::Vector3d(9001,9001,9001);}
 	
+	Eigen::MatrixXd retvec;
+	retvec.resize(numQuads_*2*3, 1); //pos, vel
+
 	//note: the lastGesture_ -> currentGesture_ comparison should be done in switch callback
 	if(!gestureHasBeenInitialized_)
 	{
@@ -34,6 +34,7 @@ Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const 
 	}
 
 
+	return Eigen::Vector3d(9001,9001,9001);
 }
 
 

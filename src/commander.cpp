@@ -1,23 +1,26 @@
-#include commander.hpp
-
+#include "commander.hpp"
 
 namespace handIn
 {
 
 commander::commander(ros::NodeHandle &nh)
+{isGreen_=false;}
+
+
+void commander::setnodehandle(ros::NodeHandle &nh)
 {
 	nh_ = &nh;
 	statusTimer_ = nh_.createTimer(ros::Duration(1.0/2.0), &commander::statusTimerCallback, this, false);
 }
 
 
-void commander::configure(const int nk, const std::string &names[])
+void commander::configure(const int nk, const std::string *names)
 {
 	isConfigured_ = true;
 	numQuads_ = nk;
  	for(int ij=0; ij<nk; ij++)
  	{
- 		quadList_[ij] = names[ij];
+ 		quadList_[ij] = *names[ij];
  		hasName_[ij] = true;
  	}
 }
@@ -26,7 +29,8 @@ void commander::configure(const int nk, const std::string &names[])
 void commander::getGestureList(const std::string &filename)
 {
 	//file reader goes here <<>>
-
+	Eigen::Vector3d dat;
+	dat(0)=9001;
 	
 	int nrow = dat(0);
 	gesturePairingsRight_.resize(nrow,2);

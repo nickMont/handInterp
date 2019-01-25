@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 2.8.3)
 project(hand_endpoint)
 
 set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS} -Wno-format-security -Wno-literal-suffix -DCATKIN_BUILD")
-add_definitions(-std=c++98)
+set(CMAKE_CXX_STANDARD 11)
 
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs

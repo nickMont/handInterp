@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <nag_msgs/odometry.h>
+#include <nav_msgs/Odometry.h>
 #include <cmath>
 #include <iostream>
 #include <Eigen/Geometry>
@@ -23,7 +23,7 @@ class handEndpoint
 public:
 	typedef Eigen::Matrix<double, 14, 1> Eigen14d;
 
-	handEndpoint(ros::nodeHandle &nh);
+	handEndpoint(ros::NodeHandle &nh);
 	void configure(const int useROS, const std::string topicOrPortName, const int getGestureFromNN, const std::string gestureTopic);
 	void setCommanderPtr(std::shared_ptr<handIn::commander> commptr);
 	void handAction(const float &datmat);
@@ -34,7 +34,7 @@ public:
 
 
 private:
-	ros::nodeHandle nh;
+	ros::NodeHandle nh;
 	ros::Subscriner handSub_, gsSub_, endpointFromNN_, handCenterSubRight_, handCenterSubLeft_;
 	ros::Publisher endpointToNN_;
 	int gestureInput_, thisGestR_, thisGestL_;

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <ros/ros.h>
-#include <nag_msgs/odometry.h>
+#include <nav_msgs/Odometry.h>
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -14,8 +14,9 @@ class quadContainer;
 class commander
 {
 public:
-	commander(ros::nodeHandle &nh);
-	void configure(const int nk, const std::string &names[]);
+	commander();
+	void setnodehandle(ros::NodeHandle &nh);
+	void configure(const int nk, const std::string *names[]);
 	void getGestureList(const std::string &filename);
 	void statusTimerCallback(const ros::TimerEvent &event);
 	void setQuadPointer(const std::string &name, std::shared_ptr<handIn::quadContainer> commptr);

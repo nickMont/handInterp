@@ -1,6 +1,4 @@
-#pragma once
-#include quadContainer.hpp
-
+#include "quadContainer.hpp"
 
 namespace handIn
 {

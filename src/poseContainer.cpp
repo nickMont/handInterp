@@ -1,10 +1,7 @@
-#pragma once
-#include poseContainer.hpp
-
+#include "poseContainer.hpp"
 
 namespace handIn
 {
-
 poseContainer::poseContainer(ros::NodeHandle &nh)
 {
 	nh_ = &nh;

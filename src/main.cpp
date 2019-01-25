@@ -67,6 +67,7 @@ int main(int argc, char **argv)
     }
 
     handSub->configure();
+    commandGenerator->setnodehandle(nh);
     commandGenerator->configure();
 
     ros::spin();
