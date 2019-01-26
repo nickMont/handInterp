@@ -14,13 +14,16 @@ class quadContainer;
 class commander
 {
 public:
+	typedef Eigen::Matrix<double, 55, 1> Vector55d;
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	commander();
 	void setnodehandle(ros::NodeHandle &nh);
-	void configure(const int nk, const std::string *names[]);
+	void configure(const int nk, const std::vector<std::string>& names);
 	void getGestureList(const std::string &filename);
 	void statusTimerCallback(const ros::TimerEvent &event);
 	void setQuadPointer(const std::string &name, std::shared_ptr<handIn::quadContainer> commptr);
-	void sendHand(const double &handData[55]);
+	void sendHand(const Vector55d &handData);
 	void matchAndPerformAction(int rR, int lL);
 	int getIndexMatchingName(const std::string& stringToMatch, 
         const std::vector<std::string>& stringmat, const int listLen);
@@ -29,10 +32,15 @@ public:
 	Eigen::VectorXd leastSquares(const Eigen::MatrixXd &A, const Eigen::VectorXd &z);
 
 private:
-	ros::nodeHandle nh_;
+	ros::NodeHandle nh_;
 	double hand_[55];
 	int numQuads_;
-	bool isConfigured_, hasName_[10], isInitialized_[10], hasPtr_[10], isGreen_;
+	bool isConfigured_, hasName_[10], isInitialized_[10], hasPtr_[10], isGreen_, gestureHasBeenInitialized_;
 	std::string quadList_[10];
+	ros::Timer statusTimer_;
+	std::shared_ptr<handIn::quadContainer> quadPoseContainer_[10];
+	Eigen::MatrixXi gesturePairingsRight_, gesturePairingsLeft_;
 
-}
+};
+
+} //ns

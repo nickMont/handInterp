@@ -5,7 +5,7 @@ namespace handIn
 
 quadContainer::quadContainer(ros::NodeHandle &nh)
 {
-	nh_ = &nh;
+	nh_ = nh;
 	hasPose_=false;
 }
 
@@ -51,6 +51,14 @@ Eigen::Vector3d quadContainer::getPos()
 }
 
 
+void quadContainer::getPosPointer(Eigen::Vector3d *tmp)
+{
+	*tmp(0) = lastPos_(0);
+	*tmp(1) = lastPos_(1);
+	*tmp(2) = lastPos_(2);
+}
+
+
 Eigen::Vector3d quadContainer::getInitPos()
 {
 	return initPos_;
@@ -78,6 +86,11 @@ std::string quadContainer::getName()
 bool quadContainer::getStatus()
 {
 	return hasPose_;
+}
+
+void quadContainer::getStatusPointer(bool *tmp)
+{
+	*tmp = hasPose_;
 }
 
 

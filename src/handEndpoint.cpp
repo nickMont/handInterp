@@ -5,7 +5,7 @@ namespace handIn
 
 handEndpoint::handEndpoint(ros::NodeHandle &nh)
 {
-	nh_ = &nh;
+	nh_ = nh;
 	hasHandCenter_[0] = false;
 	hasHandCenter_[1] = false;
 	hasCommander_=false;
@@ -198,54 +198,54 @@ void handEndpoint::handCallback(const hand_endpoint::hands::ConstPtr &msg)
 {
 	if(hasHandCenter_[0] && hasHandCenter_[1])
 	{
-	float handFull[55];
+	float Eigen::Vector55d handFull;
 	//see endpoint.cs for matching convention, drawn from Unity
-	handFull[ 0] = (msg->header.stamp).toSec();
-	handFull[ 1] = 1;
+	handFull( 0) = (msg->header.stamp).toSec();
+	handFull( 1) = 1;
 	//quaternion describing each finger
-	handFull[ 2] = msg->right.thumb.x;
-	handFull[ 3] = msg->right.thumb.y;
-	handFull[ 4] = msg->right.thumb.z;
-	handFull[ 5] = msg->right.thumb.w;
-	handFull[ 6] = msg->right.point.x;
-	handFull[ 7] = msg->right.point.y;
-	handFull[ 8] = msg->right.point.z;
-	handFull[ 9] = msg->right.point.w;
-	handFull[10] = msg->right.middle.x;
-	handFull[11] = msg->right.middle.y;
-	handFull[12] = msg->right.middle.z;
-	handFull[13] = msg->right.middle.w;
-	handFull[14] = msg->right.index.x;
-	handFull[15] = msg->right.index.y;
-	handFull[16] = msg->right.index.z;
-	handFull[17] = msg->right.index.w;
-	handFull[18] = msg->right.pinky.x;
-	handFull[19] = msg->right.pinky.y;
-	handFull[20] = msg->right.pinky.z;
-	handFull[21] = msg->right.pinky.w;
+	handFull( 2) = msg->right.thumb.x;
+	handFull( 3) = msg->right.thumb.y;
+	handFull( 4) = msg->right.thumb.z;
+	handFull( 5) = msg->right.thumb.w;
+	handFull( 6) = msg->right.point.x;
+	handFull( 7) = msg->right.point.y;
+	handFull( 8) = msg->right.point.z;
+	handFull( 9) = msg->right.point.w;
+	handFull(10) = msg->right.middle.x;
+	handFull(11) = msg->right.middle.y;
+	handFull(12) = msg->right.middle.z;
+	handFull(13) = msg->right.middle.w;
+	handFull(14) = msg->right.index.x;
+	handFull(15) = msg->right.index.y;
+	handFull(16) = msg->right.index.z;
+	handFull(17) = msg->right.index.w;
+	handFull(18) = msg->right.pinky.x;
+	handFull(19) = msg->right.pinky.y;
+	handFull(20) = msg->right.pinky.z;
+	handFull(21) = msg->right.pinky.w;
 
 	//left hand
-	handFull[22] = 0;
-	handFull[23] = msg->left.thumb.x;
-	handFull[24] = msg->left.thumb.y;
-	handFull[25] = msg->left.thumb.z;
-	handFull[26] = msg->left.thumb.w;
-	handFull[27] = msg->left.point.x;
-	handFull[28] = msg->left.point.y;
-	handFull[29] = msg->left.point.z;
-	handFull[30] = msg->left.point.w;
-	handFull[31] = msg->left.middle.x;
-	handFull[32] = msg->left.middle.y;
-	handFull[33] = msg->left.middle.z;
-	handFull[34] = msg->left.middle.w;
-	handFull[35] = msg->left.index.x;
-	handFull[36] = msg->left.index.y;
-	handFull[37] = msg->left.index.z;
-	handFull[38] = msg->left.index.w;
-	handFull[39] = msg->left.pinky.x;
-	handFull[40] = msg->left.pinky.y;
-	handFull[41] = msg->left.pinky.z;
-	handFull[42] = msg->left.pinky.w;
+	handFull(22) = 0;
+	handFull(23) = msg->left.thumb.x;
+	handFull(24) = msg->left.thumb.y;
+	handFull(25) = msg->left.thumb.z;
+	handFull(26) = msg->left.thumb.w;
+	handFull(27) = msg->left.point.x;
+	handFull(28) = msg->left.point.y;
+	handFull(29) = msg->left.point.z;
+	handFull(30) = msg->left.point.w;
+	handFull(31) = msg->left.middle.x;
+	handFull(32) = msg->left.middle.y;
+	handFull(33) = msg->left.middle.z;
+	handFull(34) = msg->left.middle.w;
+	handFull(35) = msg->left.index.x;
+	handFull(36) = msg->left.index.y;
+	handFull(37) = msg->left.index.z;
+	handFull(38) = msg->left.index.w;
+	handFull(39) = msg->left.pinky.x;
+	handFull(40) = msg->left.pinky.y;
+	handFull(41) = msg->left.pinky.z;
+	handFull(42) = msg->left.pinky.w;
 
 	if(!gestureInput_)
 	{
@@ -260,8 +260,8 @@ void handEndpoint::handCallback(const hand_endpoint::hands::ConstPtr &msg)
 	{
 		handFull(ij+43) = handCen(ij);
 	}
-	handFull[53] = thisGestR_;
-	handFull[54] = thisGestL_;
+	handFull(53) = thisGestR_;
+	handFull(54) = thisGestL_;
 
 	handAction(handFull);
 	} //end IF_INIT

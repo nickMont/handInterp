@@ -22,6 +22,8 @@ class handEndpoint
 {
 public:
 	typedef Eigen::Matrix<double, 14, 1> Eigen14d;
+	typedef Eigen::Matrix<double, 55, 1> Eigen55d;
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	handEndpoint(ros::NodeHandle &nh);
 	void configure(const int useROS, const std::string topicOrPortName, const int getGestureFromNN, const std::string gestureTopic);
@@ -31,7 +33,6 @@ public:
 	void gestureCallback(const hand_endpoint::gesture::ConstPtr &msg);
 	void createPipeAndSpin(const int PORT);
 	void handCallback(const hand_endpoint::hand::ConstPtr &msg);
-
 
 private:
 	ros::NodeHandle nh;

@@ -18,7 +18,7 @@ Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const 
 		Eigen::Vector3d tmp;
 		for(int ij=0; ij<numQuads_; ij++)
 		{
-			tmp = quadPoseContainer_[ij].getPos();
+			quadPoseContainer_[ij]->getPosPointer(&tmp);
 			currentPoses(3*ij+0) = tmp(0);
 			currentPoses(3*ij+1) = tmp(1);
 			currentPoses(3*ij+2) = tmp(2);
@@ -41,7 +41,7 @@ Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const 
 Eigen::VectorXd commander::leastSquares(const Eigen::MatrixXd &A, const Eigen::VectorXd &z)
 {
 	//size checks here
-	if(A.rows()-z.length() !=0)
+	if(A.rows()-z.rows() !=0)
 	{
 		return (A.transpose()*A).inverse()*A.transpose()*z;
 	}

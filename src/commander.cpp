@@ -3,24 +3,24 @@
 namespace handIn
 {
 
-commander::commander(ros::NodeHandle &nh)
+commander::commander()
 {isGreen_=false;}
 
 
 void commander::setnodehandle(ros::NodeHandle &nh)
 {
-	nh_ = &nh;
+	nh_ = nh;
 	statusTimer_ = nh_.createTimer(ros::Duration(1.0/2.0), &commander::statusTimerCallback, this, false);
 }
 
 
-void commander::configure(const int nk, const std::string *names)
+void commander::configure(const int nk, const std::vector<std::string>& names)
 {
 	isConfigured_ = true;
 	numQuads_ = nk;
  	for(int ij=0; ij<nk; ij++)
  	{
- 		quadList_[ij] = *names[ij];
+ 		quadList_[ij] = names[ij];
  		hasName_[ij] = true;
  	}
 }
@@ -47,13 +47,15 @@ void commander::statusTimerCallback(const ros::TimerEvent &event)
 	if(isGreen_)
 	{return;}
 	
+	bool tmp;
 	if(isConfigured_)
 	{
 		for(int ij=0;ij<numQuads_;ij++)
 		{
 			if(hasPtr_[ij]) //don't reference a null pointer
 			{
-				if(quadPoseContainer_[ij]->getStatus() && hasName_[ij]) //if poses are good
+				quadPoseContainer_[ij]->getStatusPointer(&tmp);
+				if(tmp && hasName_[ij]) //if poses are good
 				{
 					isInitialized_[ij] = true;
 				}
@@ -92,11 +94,11 @@ void commander::setQuadPointer(const std::string &name, std::shared_ptr<handIn::
 }
 
 
-void commander::sendHand(const double &handData[55])
+void commander::sendHand(const Vector55d &handData)
 {
 	hand_ = handData;
-	int rGest = round(handData[53]);
-	int lGest = round(handData[54]);
+	int rGest = round(handData(53));
+	int lGest = round(handData(54));
 	matchAndPerformAction(rGest, lGest);
 }
 

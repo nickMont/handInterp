@@ -13,18 +13,22 @@ namespace handIn
 class quadContainer
 {
 public:
+	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+
 	quadContainer(ros::NodeHandle &nh);
 	void configure();
-	void setName(const string quadname);
+	void setName(const std::string quadname);
 	void odomCallback(const nav_msgs::Odometry &msg);
 	void setInitPos(const Eigen::Vector3d &pos);
 	Eigen::Vector3d getPos();
 	Eigen::Vector3d getInitPos();
 	Eigen::Quaterniond getQuat();
 	nav_msgs::Odometry getOdom();
-	string getName();
+	std::string getName();
 	bool getStatus();
-
+	//pointer-based getters
+	void getPosPointer(Eigen::Vector3d *tmp);
+	void getStatusPointer(bool *tmp);
 
 private:
 	ros::NodeHandle nh_;
