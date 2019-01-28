@@ -16,9 +16,10 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	quadContainer(ros::NodeHandle &nh);
-	void configure();
+	void configure(const int nk);
 	void setName(const std::string quadname);
 	void odomCallback(const nav_msgs::Odometry &msg);
+	void setOdom(const nav_msgs::Odometry &msg);	
 	void setInitPos(const Eigen::Vector3d &pos);
 	Eigen::Vector3d getPos();
 	Eigen::Vector3d getInitPos();

@@ -6,11 +6,10 @@
 #include <string>
 #include <iostream>
 #include <Eigen/Geometry>
+#include "quadContainer.hpp"
 
 namespace handIn
 {
-//forward declare quadContainer
-class quadContainer;
 
 class poseContainer
 {

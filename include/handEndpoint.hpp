@@ -13,6 +13,8 @@
 #include <netinet/in.h> 
 #include <string.h>
 #include <boost/program_options.hpp>
+#include "hand_endpoint/hands.h"
+#include "hand_endpoint/gesture.h"
 
 namespace handIn
 {
@@ -32,11 +34,11 @@ public:
 	double getRosTime();
 	void gestureCallback(const hand_endpoint::gesture::ConstPtr &msg);
 	void createPipeAndSpin(const int PORT);
-	void handCallback(const hand_endpoint::hand::ConstPtr &msg);
+	void handCallback(const hand_endpoint::hands::ConstPtr &msg);
 
 private:
-	ros::NodeHandle nh;
-	ros::Subscriner handSub_, gsSub_, endpointFromNN_, handCenterSubRight_, handCenterSubLeft_;
+	ros::NodeHandle nh_;
+	ros::Subscriber handSub_, gsSub_, endpointFromNN_, handCenterSubRight_, handCenterSubLeft_;
 	ros::Publisher endpointToNN_;
 	int gestureInput_, thisGestR_, thisGestL_;
 	std::shared_ptr<handIn::commander> commander_;

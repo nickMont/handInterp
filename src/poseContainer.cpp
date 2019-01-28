@@ -42,8 +42,8 @@ void poseContainer::createPoseSub(const int ij, const std::string quadname)
 //use MessageEvent syntax to create one ROS callback for all pose topics
 void poseContainer::poseEventCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event)
 {
-	//extract message contents
-	const nav_msgs::Odometry::ConstPtr& msg = event.getMessage();
+	 //extract message contents
+	 const nav_msgs::Odometry::ConstPtr& msg = event.getMessage();
 
 	//get topic name in callback by using messageevent syntax
   	ros::M_string& header = event.getConnectionHeader();
@@ -64,14 +64,14 @@ void poseContainer::poseEventCallback(const ros::MessageEvent<nav_msgs::Odometry
         hasInitPos_[nk] = true;
     }
 
-    quadContainerPtr_[nk]->setOdom(msg);
+    quadContainerPtr_[nk]->setOdom(*msg);
     return;
 }
 
 
 bool poseContainer::hasData(const int index)
 {
-  return hasInitPos_[index]
+  return hasInitPos_[index];
 }
 
 
