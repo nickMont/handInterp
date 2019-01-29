@@ -15,26 +15,28 @@
 #include <boost/program_options.hpp>
 #include "hand_endpoint/hands.h"
 #include "hand_endpoint/gesture.h"
+#include "commander.hpp"
 
 namespace handIn
 {
-class commander;
-
 class handEndpoint
 {
 public:
-	typedef Eigen::Matrix<double, 14, 1> Eigen14d;
-	typedef Eigen::Matrix<double, 55, 1> Eigen55d;
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
+	typedef Eigen::Matrix<double, 14, 1> Vector14d;
+	typedef Eigen::Matrix<double, 55, 1> Vector55d;
 
 	handEndpoint(ros::NodeHandle &nh);
 	void configure(const int useROS, const std::string topicOrPortName, const int getGestureFromNN, const std::string gestureTopic);
 	void setCommanderPtr(std::shared_ptr<handIn::commander> commptr);
-	void handAction(const float &datmat);
+	void handAction(const Vector55d &datmat);
 	double getRosTime();
 	void gestureCallback(const hand_endpoint::gesture::ConstPtr &msg);
 	void createPipeAndSpin(const int PORT);
 	void handCallback(const hand_endpoint::hands::ConstPtr &msg);
+	void handCenterCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
+	void handAction(const float datmat[]);
+	Vector14d getHandCenters();
 
 private:
 	ros::NodeHandle nh_;
@@ -43,6 +45,9 @@ private:
 	int gestureInput_, thisGestR_, thisGestL_;
 	std::shared_ptr<handIn::commander> commander_;
 	double lastTProc_, gestTime_;
+	bool isGreen_, hasCommander_;
+	Eigen::Vector3d rightHand, leftHand;
+	Eigen::Quaterniond rightHandQ, leftHandQ;
 
 };
 

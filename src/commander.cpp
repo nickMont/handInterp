@@ -14,7 +14,7 @@ void commander::setnodehandle(ros::NodeHandle &nh)
 }
 
 
-void commander::configure(const int nk, const std::vector<std::string>& names)
+void commander::configure(const int nk, const std::string names[10])
 {
 	isConfigured_ = true;
 	numQuads_ = nk;
@@ -33,6 +33,7 @@ void commander::getGestureList(const std::string &filename)
 	dat(0)=9001;
 	
 	int nrow = dat(0);
+	//maybe make this pseudo-infinite size and avoid dynamic compilation errors?
 	gesturePairingsRight_.resize(nrow,2);
 	gesturePairingsLeft_.resize(nrow,2);
 

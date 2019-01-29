@@ -22,6 +22,12 @@ void quadContainer::setName(const std::string quadname)
 }
 
 
+void quadContainer::setName(const int nk, const std::string quadname)
+{
+	quadIntIndex_ = nk;
+	quadName_ = quadname;
+}
+
 //unused, for now
 void quadContainer::odomCallback(const nav_msgs::Odometry &msg)
 {

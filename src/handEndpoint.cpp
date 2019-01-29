@@ -6,9 +6,12 @@ namespace handIn
 handEndpoint::handEndpoint(ros::NodeHandle &nh)
 {
 	nh_ = nh;
-	hasHandCenter_[0] = false;
-	hasHandCenter_[1] = false;
+	isGreen_ = true; //this check can be modified later but should be fine with either pipe
 	hasCommander_=false;
+	rightHand = Eigen::Vector3d(0,0,0);
+	rightHandQ = Eigen::Quaterniond(0,0,0,1);
+	leftHand = Eigen::Vector3d(0,0,0);
+	leftHandQ = Eigen::Quaterniond(0,0,0,1);
 }
 
 
@@ -30,7 +33,7 @@ void handEndpoint::configure(const int useROS, const std::string topicOrPortName
 	// 2: Piped externally to NN
 	if(getGestureFromNN==0)
 	{
-		gsSub_ = nh.subscribe(gestureTopic,1,&handEndpoint::handCallback,
+		gsSub_ = nh_.subscribe(gestureTopic,1,&handEndpoint::handCallback,
 		  this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
 		gestureInput_ = 0;
 	}
@@ -39,17 +42,53 @@ void handEndpoint::configure(const int useROS, const std::string topicOrPortName
 		gestureInput_ = 1;
 	}else if(getGestureFromNN==2) //NOTE: Timing is not implemented, waiting to test with new gloves
 	{
-		endpointToNN_ = nh_.advertise<hand_endpoint::hand>("/hands", 1;
+		endpointToNN_ = nh_.advertise<hand_endpoint::hands>("/hands", 1);
 		endpointFromNN_ = nh_.subscribe("/gestureTopic",1,&handEndpoint::gestureCallback,
-			this, ros::TransportHints().unreliable.reliable().tcpNoDelay(true));
+			this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
 	}
 
 	handCenterSubRight_ = nh_.subscribe("/rightHand/local_odom",1,&handEndpoint::handCenterCallback,
-		this, ros::TransportHints().unreliable.reliable().tcpNoDelay(true));
+		this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
 	handCenterSubLeft_ = nh_.subscribe("/leftHand/local_odom",1,&handEndpoint::handCenterCallback,
-		this, ros::TransportHints().unreliable.reliable().tcpNoDelay(true));)
+		this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
 	return;
 }
+
+
+void handEndpoint::handCenterCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event)
+{
+ 	//extract message contents
+	const nav_msgs::Odometry::ConstPtr& msg = event.getMessage();
+
+	//get topic name in callback by using messageevent syntax
+  	ros::M_string& header = event.getConnectionHeader();
+  	std::string publisherName = header.at("topic");
+  	//remove leading "/"
+  	publisherName = publisherName.substr(1,publisherName.length());
+	
+	//match publisher name to 
+  	if(strcmp(publisherName.c_str() , "rightHand/local_odom")==0)
+  	{
+  		rightHand(0) = msg->pose.pose.position.x;
+  		rightHand(1) = msg->pose.pose.position.y;
+  		rightHand(2) = msg->pose.pose.position.z;
+  		rightHandQ.x() = msg->pose.pose.orientation.x;
+  		rightHandQ.y() = msg->pose.pose.orientation.y;
+  		rightHandQ.z() = msg->pose.pose.orientation.z;
+  		rightHandQ.w() = msg->pose.pose.orientation.w;
+  	}
+  	else if(strcmp(publisherName.c_str() , "leftHand/local_odom")==0)
+  	{
+  		leftHand(0) = msg->pose.pose.position.x;
+  		leftHand(1) = msg->pose.pose.position.y;
+  		leftHand(2) = msg->pose.pose.position.z;
+  		leftHandQ.x() = msg->pose.pose.orientation.x;
+  		leftHandQ.y() = msg->pose.pose.orientation.y;
+  		leftHandQ.z() = msg->pose.pose.orientation.z;
+  		leftHandQ.w() = msg->pose.pose.orientation.w;
+  	}
+}
+
 
 
 void handEndpoint::setCommanderPtr(std::shared_ptr<handIn::commander> commptr)
@@ -60,9 +99,10 @@ void handEndpoint::setCommanderPtr(std::shared_ptr<handIn::commander> commptr)
 }
 
 
-void handEndpoint::handAction(const float &datmat[])
+void handEndpoint::handAction(const Vector55d &datmat)
 {
 	lastTProc_ = getRosTime();
+	//evaluate NN?
 	if(hasCommander_)
 	{
 		commander_->sendHand(datmat);
@@ -71,9 +111,9 @@ void handEndpoint::handAction(const float &datmat[])
 
 
 //double check this return <<<
-Eigen14d handEndpoint::getHandCenters()
+Eigen::Matrix<double,14,1> handEndpoint::getHandCenters()
 {
-	Eigen14d datArr;
+	Vector14d datArr;
 	datArr( 0) = rightHand(0);
 	datArr( 1) = rightHand(1);
 	datArr( 2) = rightHand(2);
@@ -101,8 +141,8 @@ double handEndpoint::getRosTime()
 void handEndpoint::gestureCallback(const hand_endpoint::gesture::ConstPtr &msg)
 {
 	gestTime_ = (msg->header.stamp).toSec();
-	thisGestR_ = msg->gestureRight;
-	thisGestL_ = msg->gestureLeft;
+	thisGestR_ = msg->gestureRight.data;
+	thisGestL_ = msg->gestureLeft.data;
 }
 
 
@@ -154,21 +194,22 @@ void handEndpoint::createPipeAndSpin(const int PORT)
   		connfd = accept (server_fd, (struct sockaddr *) &clientaddress, &clilen);
   		printf("%s\n","Received request...");
 
-  		float handFull[55];
-  		Eigen14d handCen;
+  		Vector55d handFull;
+  		Vector14d handCen;
 
-  		while ( (n = recv(connfd, buffer, MAXLINE,0)) > 0) 
+  		//arbitrarily set max buffer length at 5000
+  		while ( (n = recv(connfd, buffer, 5000 ,0)) > 0) 
   		{
-  			if(hasHandCenter_[0] && hasHandCenter_[1])
+  			if(isGreen_)
 			{
 			//process buffer
   			for(int ij=0; ij<42; ij++)
-			{handFull[ij]=buffer[ij];}
+			{handFull(ij)=buffer[ij];}
 
 			//augment with hande odometry
-  			handCen = getHandCenters;
+  			handCen = getHandCenters();
   			for(int ij=0; ij<13; ij++)
-			{handFull[ij+43]=handCen[ij];}
+			{handFull(ij+43)=handCen[ij];}
 
 			if(gestureInput_==1)
 			{
@@ -179,8 +220,8 @@ void handEndpoint::createPipeAndSpin(const int PORT)
 				//create and publish hand message; not implemented, pending testing
 			}
 
-			handFull[53] = thisGestR_;
-			handFull[54] = thisGestL_;
+			handFull(53) = thisGestR_;
+			handFull(54) = thisGestL_;
   			handAction(handFull);
   			}
    		}
@@ -196,9 +237,9 @@ void handEndpoint::createPipeAndSpin(const int PORT)
 
 void handEndpoint::handCallback(const hand_endpoint::hands::ConstPtr &msg)
 {
-	if(hasHandCenter_[0] && hasHandCenter_[1])
+	if(isGreen_)
 	{
-	float Eigen::Vector55d handFull;
+	Vector55d handFull;
 	//see endpoint.cs for matching convention, drawn from Unity
 	handFull( 0) = (msg->header.stamp).toSec();
 	handFull( 1) = 1;
@@ -249,13 +290,13 @@ void handEndpoint::handCallback(const hand_endpoint::hands::ConstPtr &msg)
 
 	if(!gestureInput_)
 	{
-		thisGestR_ = msg->right.gesture;
-		thisGestL_ = msg->left.gesture;
+		thisGestR_ = msg->right.gesture.data;
+		thisGestL_ = msg->left.gesture.data;
 	}
 
 
 	//augment with hand centers
-	Eigen14d handCen = getHandCenters();
+	Vector14d handCen = getHandCenters();
 	for(int ij=0; ij<14; ij++)
 	{
 		handFull(ij+43) = handCen(ij);

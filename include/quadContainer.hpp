@@ -18,6 +18,7 @@ public:
 	quadContainer(ros::NodeHandle &nh);
 	void configure(const int nk);
 	void setName(const std::string quadname);
+	void setName(const int nk, const std::string quadname);
 	void odomCallback(const nav_msgs::Odometry &msg);
 	void setOdom(const nav_msgs::Odometry &msg);	
 	void setInitPos(const Eigen::Vector3d &pos);

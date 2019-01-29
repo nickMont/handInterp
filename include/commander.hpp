@@ -18,7 +18,7 @@ public:
 
 	commander();
 	void setnodehandle(ros::NodeHandle &nh);
-	void configure(const int nk, const std::vector<std::string>& names);
+	void configure(const int nk, const std::string names[10]);
 	void getGestureList(const std::string &filename);
 	void statusTimerCallback(const ros::TimerEvent &event);
 	void setQuadPointer(const std::string &name, std::shared_ptr<handIn::quadContainer> commptr);
