@@ -34,12 +34,12 @@ public:
 private:
 	ros::NodeHandle nh_;
 	Vector55d hand_;
-	int numQuads_;
+	int numQuads_, numGesturesInCatalog_;
 	bool isConfigured_, hasName_[10], isInitialized_[10], hasPtr_[10], isGreen_, gestureHasBeenInitialized_;
 	std::string quadList_[10];
 	ros::Timer statusTimer_;
 	std::shared_ptr<handIn::quadContainer> quadPoseContainer_[10];
-	Eigen::MatrixXi gesturePairingsRight_, gesturePairingsLeft_;
+	Eigen::Matrix<int,100,2> gesturePairingsRight_, gesturePairingsLeft_;
 
 };
 

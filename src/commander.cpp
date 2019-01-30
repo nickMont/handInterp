@@ -32,10 +32,10 @@ void commander::getGestureList(const std::string &filename)
 	Eigen::Vector3d dat;
 	dat(0)=9001;
 	
-	int nrow = dat(0);
+	numGesturesInCatalog_ = dat(0);
 	//maybe make this pseudo-infinite size and avoid dynamic compilation errors?
-	gesturePairingsRight_.resize(nrow,2);
-	gesturePairingsLeft_.resize(nrow,2);
+	//gesturePairingsRight_.resize(nrow,2);
+	//gesturePairingsLeft_.resize(nrow,2);
 
 	gesturePairingsLeft_ = gesturePairingsRight_;
 }
@@ -111,6 +111,7 @@ void commander::matchAndPerformAction(int rR, int lL)
 	indexOfLeftGest = findIndexInList(rR,gesturePairingsLeft_,0);
 
 	//call commandgenerator here
+
 }
 
 
@@ -151,7 +152,8 @@ int commander::getIndexFromNamelist(const std::string& stringToMatch, const int 
 
 int commander::findIndexInList(int match, const Eigen::MatrixXd &ref, const int colno)
 {
-	int a = ref.rows();
+	//int a = ref.rows();
+	int a = numGesturesInCatalog_;
 	for(int ij=0; ij<a; ij++)
 	{
 		if(match==ref(ij,colno))

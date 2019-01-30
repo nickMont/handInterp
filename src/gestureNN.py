@@ -19,6 +19,7 @@ tf.set_random_seed(0.0)
 #       \x/             -- fully connected layer (relu+BN)      W4 [48, 12]        B4[12]
 #        ·                                                      Y4 [batch, 12]
 
+
 # input X: 7x2000 data vector, the last dimension (None) will index the images in the mini-batch
 X = tf.placeholder(tf.float32, [None,18])
 # correct parameters will go here
@@ -29,7 +30,7 @@ pkeep = tf.placeholder(tf.float32)
 
 
 # Neural network with three hidden layers.  More can be added by increasing depth here.
-L = 18
+L = 25
 M = 15
 N = 10
 O = 5
@@ -58,7 +59,6 @@ Y3d = tf.nn.dropout(Y3,pkeep)
 Y4 = tf.nn.tanh(tf.matmul(Y3d,W4) + B4)
 Y4d = tf.nn.dropout(Y4,pkeep)
 Y = (tf.matmul(Y4d,W5) + B5)
-
 
 
 # Mean Square Loss works is the simplest option for regression problems
@@ -95,6 +95,7 @@ sess.run(init)
 #Call this function in a loop to train the model, 10 flights at a time
 #This is the training data matrix
 
+
 #This is the test data matrix
 #mat2 = sio.loadmat('/Users/evansrnka/PycharmProjects/nn_imu/imudat2')
 def training_step(update_train_data,update_test_data,dataindex,testindex):
@@ -121,8 +122,6 @@ def training_step(update_train_data,update_test_data,dataindex,testindex):
 #        print(np.mean(truth,0))
         print(predict)
         print(truth)
-
-
 
 
 #The training loop

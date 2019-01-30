@@ -32,8 +32,6 @@ Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const 
 	{
 
 	}
-
-
 	return Eigen::Vector3d(9001,9001,9001);
 }
 
