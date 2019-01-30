@@ -36,9 +36,9 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     //Contains all pose subscribers
-    auto poseSubs = std::make_shared<handIn::poseContainer>();
+    auto poseSubs = std::make_shared<handIn::poseContainer>(nh);
     //Contains endpoint to VR driver
-    auto handSub = std::make_shared<handIn::handEndpoint>();
+    auto handSub = std::make_shared<handIn::handEndpoint>(nh);
     //Converts hand+pose->gesture
     auto commandGenerator = std::make_shared<handIn::commander>();
     

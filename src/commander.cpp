@@ -150,7 +150,7 @@ int commander::getIndexFromNamelist(const std::string& stringToMatch, const int 
 }
 
 
-int commander::findIndexInList(int match, const Eigen::MatrixXd &ref, const int colno)
+int commander::findIndexInList(int match, const Eigen::Matrix<int,100,2> &ref, const int colno)
 {
 	//int a = ref.rows();
 	int a = numGesturesInCatalog_;

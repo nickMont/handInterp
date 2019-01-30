@@ -27,7 +27,7 @@ public:
 	int getIndexMatchingName(const std::string& stringToMatch, 
         const std::vector<std::string>& stringmat, const int listLen);
 	int getIndexFromNamelist(const std::string& stringToMatch, const int listLen);
-	int findIndexInList(int match, const Eigen::MatrixXd &ref, const int colno);
+	int findIndexInList(int match, const Eigen::Matrix<int,100,2> &ref, const int colno);
 	Eigen::VectorXd getRefsForCircularFlight(const double zFlight, const double omega, const double turnRadius);
 	Eigen::VectorXd leastSquares(const Eigen::MatrixXd &A, const Eigen::VectorXd &z);
 
