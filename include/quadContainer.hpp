@@ -7,7 +7,6 @@
 #include <iostream>
 #include <Eigen/Geometry>
 
-
 namespace handIn
 {
 class quadContainer

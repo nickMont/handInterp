@@ -23,6 +23,10 @@ void commander::configure(const int nk, const std::string names[10])
  		quadList_[ij] = names[ij];
  		hasName_[ij] = true;
  	}
+ 	for(int ij=0; ij<nk; ij++)
+ 	{
+ 		pvaPub_[ij] = nh_.advertise<mg_msgs::PVA>("/"+quadList_[ij]+"/PVA_ref",1);
+ 	}
 }
 
 

@@ -13,6 +13,7 @@ find_package(catkin REQUIRED COMPONENTS
   mg_msgs
 )
 find_package(Eigen REQUIRED)
+find_package(Ceres REQUIRED)
 
 add_message_files(
   FILES
@@ -31,6 +32,7 @@ catkin_package(
     INCLUDE_DIRS include
     CATKIN_DEPENDS std_msgs geometry_msgs message_runtime mg_msgs nav_msgs
     DEPENDS Eigen
+    DEPENDS Ceres
     DEPENDS system_lib
 )
 
@@ -38,9 +40,12 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${Eigen_INCLUDE_DIRS}
+  ${CERES_INCLUDE_DIRS}
 )
 
-add_executable(hand_endpoint_node src/main.cpp src/commander.cpp src/commanderActions.cpp src/poseContainer.cpp src/quadContainer.cpp src/handEndpoint.cpp)
+add_executable(hand_endpoint_node src/main.cpp src/commander.cpp src/commanderActions.cpp src/poseContainer.cpp 
+    src/quadContainer.cpp src/handEndpoint.cpp src/handEndpointPipeWin.cpp)
 add_dependencies(hand_endpoint_node mg_msgs_node_generate_messages_cpp)
 add_dependencies(hand_endpoint_node hand_endpoint_generate_messages_cpp)
 target_link_libraries(hand_endpoint_node ${catkin_LIBRARIES})
+target_link_libraries(hand_endpoint_node ${CERES_LIBRARIES})
