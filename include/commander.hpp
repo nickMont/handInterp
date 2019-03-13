@@ -42,10 +42,6 @@ public:
 
 	//Gesture-based actions
 	Eigen::VectorXd getRefsForCircularFlight(const double zFlight, const double omega, const double turnRadius);
-	
-
-	//misc
-	void testCeres();
 
 private:
 	ros::NodeHandle nh_;

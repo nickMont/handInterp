@@ -90,7 +90,6 @@ void handEndpoint::handCenterCallback(const ros::MessageEvent<nav_msgs::Odometry
 }
 
 
-
 void handEndpoint::setCommanderPtr(std::shared_ptr<handIn::commander> commptr)
 {
 	commander_ = commptr;
