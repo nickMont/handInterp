@@ -1,7 +1,8 @@
 #pragma once
 
 #include <ros/ros.h>
-#include "quadContainer.hpp"
+#include "poseContainer.hpp"
+#include <Eigen/Geometry>
 
 namespace handIn
 {
@@ -12,17 +13,22 @@ public:
 
 	pointerFollower();
 	pointerFollower(int numQuads);
+	void reinitialize();
+	void reinitialize(Eigen::Vector3d &handIn);
+	void resetScalefactor(double sf);
 	void setNumQuads(int numQuads);
-	void setQuadPointer(const int ij, std::shared_ptr<handIn::quadContainer> quadptr);
-	Eigen::Matrix<double,4,10> returnPosRefs(const Eigen::Vector3d handCenterPos, const Eigen::Quaterniond handRot);
+	void setQuadPointer(std::shared_ptr<handIn::poseContainer> quadptr);
+	Eigen::Matrix<double,4,10> returnPosRefs(const Eigen::Vector3d& handCenterPos, const Eigen::Quaterniond& handRot);
+	Eigen::Matrix<double,7,10> returnPosVelRefs(const Eigen::Vector3d& handCenterPos, const Eigen::Quaterniond& handRot, const Eigen::Vector3d& velRef);
 
 private:
 	//initializer bools
-	bool isInitialized_, hasInitSwarm_, hasPointer_[10];
-	std::shared_ptr<handIn::quadContainer> quadContainerPtr_[10];
+	bool isInitialized_, hasInitSwarm_, hasPosePointer_, hasHandInitLoc_;
+	std::shared_ptr<handIn::poseContainer> poseContainerPtr_;
 	int numQuads_;
 	Eigen::Matrix<double,3,10> initConfig_;
-	Eigen::Vector3d initHandPos_;
+	Eigen::Vector3d handCenterInit_;
+	double scalefactor_;
 
 
 };

@@ -7,9 +7,10 @@ pointerFollower::pointerFollower()
 {
 	isInitialized_=false;
 	hasInitSwarm_=false;
-	for(int ij=0;ij<10;ij++)
-	{hasPointer_[ij]=false;}
+	hasPosePointer_=false;
 	initConfig_ = Eigen::Matrix<double,3,10>::Zero();
+
+	scalefactor_=2;
 }
 
 
@@ -18,8 +19,34 @@ pointerFollower::pointerFollower(int numQuads)
 	numQuads_=numQuads;
 	hasInitSwarm_=false;
 	isInitialized_=false;
-	for(int ij=0;ij<10;ij++)
-	{hasPointer_[ij]=false;}
+	hasPosePointer_=false;
+}
+
+
+void pointerFollower::reinitialize()
+{
+	Eigen::Matrix<double,3,10> tmp(Eigen::Matrix<double,3,10>::Zero());
+	poseContainerPtr_->returnAllCurrentPos(&tmp);
+	initConfig_ = tmp;
+	hasHandInitLoc_=false;
+	isInitialized_=true;
+}
+
+
+void pointerFollower::reinitialize(Eigen::Vector3d &handIn)
+{
+	Eigen::Matrix<double,3,10> tmp(Eigen::Matrix<double,3,10>::Zero());
+	poseContainerPtr_->returnAllCurrentPos(&tmp);
+	initConfig_ = tmp;
+	handCenterInit_ = handIn;
+	hasHandInitLoc_ = true;
+	isInitialized_ = true;
+}
+
+
+void pointerFollower::resetScalefactor(double sf)
+{
+	scalefactor_ = sf;
 }
 
 
@@ -28,24 +55,16 @@ void pointerFollower::setNumQuads(int numQuads)
 
 
 //pass location in memory of quad array
-void pointerFollower::setQuadPointer(const int ij, std::shared_ptr<handIn::quadContainer> quadptr)
+void pointerFollower::setQuadPointer(std::shared_ptr<handIn::poseContainer> quadptr)
 {
-	quadContainerPtr_[ij] = quadptr;
-	hasPointer_[ij] = true;
-	bool derp(true);
-	for(int ik=0;ik<numQuads_;ik++)
-	{if(!hasPointer_[ik]){derp=false;}}
-	if(derp)
+	poseContainerPtr_ = quadptr;
+	hasPosePointer_ = true;
+	if(hasHandInitLoc_)
 	{
-		Eigen::Vector3d tmppos;
-
-		for(int ij=0; ij<numQuads_; ij++)
-		{
-			quadContainerPtr_[ij]->getPosPointer(&tmppos);
-			initConfig_(0,ij)=tmppos(0);
-			initConfig_(1,ij)=tmppos(1);
-			initConfig_(2,ij)=tmppos(2);
-		}
+		//dummyvar to prevent data mixup errors
+		Eigen::Matrix<double,3,10> tmp(Eigen::Matrix<double,3,10>::Zero());
+		poseContainerPtr_->returnAllCurrentPos(&tmp);
+		initConfig_ = tmp;
 
 		isInitialized_=true;
 	}
@@ -53,7 +72,7 @@ void pointerFollower::setQuadPointer(const int ij, std::shared_ptr<handIn::quadC
 
 
 //returns references as [[pos3x1; yaw] x10]
-Eigen::Matrix<double,4,10> pointerFollower::returnPosRefs(const Eigen::Vector3d handCenterPos, const Eigen::Quaterniond handRot)
+Eigen::Matrix<double,4,10> pointerFollower::returnPosRefs(const Eigen::Vector3d& handCenterPos, const Eigen::Quaterniond& handRot)
 {
 	Eigen::Matrix<double,4,10> retmat;
 	retmat = Eigen::Matrix<double,4,10>::Zero();
@@ -68,7 +87,37 @@ Eigen::Matrix<double,4,10> pointerFollower::returnPosRefs(const Eigen::Vector3d 
 		//modify retmat with position
 		for(int ij=0; ij<numQuads_; ij++)
 		{
+			//quadContainerPtr_[ij]->getPosPointer(&tmppos);
+			retmat.block(0,ij,2,0) = initConfig_.block(0,ij,2,0) + (handCenterPos-handCenterInit_)*scalefactor_;
+		}
 
+	}else
+	{
+		std::cout << "You tried to return references without initializing!" << std::endl;
+	}
+	return retmat;
+}
+
+
+//returns references as [[pos3x1; yaw] x10]
+Eigen::Matrix<double,7,10> pointerFollower::returnPosVelRefs(const Eigen::Vector3d& handCenterPos, const Eigen::Quaterniond& handRot, const Eigen::Vector3d& velRef)
+{
+	Eigen::Matrix<double,7,10> retmat;
+	retmat = Eigen::Matrix<double,7,10>::Zero();
+
+	if(isInitialized_)
+	{
+		//see SE
+		float yaw = atan2(2.0*(handRot.y()*handRot.z() + handRot.w()*handRot.x()), handRot.w()*handRot.w() - handRot.x()*handRot.x() - handRot.y()*handRot.y() + handRot.z()*handRot.z());
+		for(int ij=0; ij<numQuads_; ij++)
+		{retmat(3,ij)=yaw;} //all quads should adopt same yaw
+
+		Eigen::Vector3d tmppos, thisPos;
+		//modify retmat with position
+		for(int ij=0; ij<numQuads_; ij++)
+		{
+			//quadContainerPtr_[ij]->getPosPointer(&tmppos);
+			retmat.block(0,ij,2,0) = initConfig_.block(0,ij,2,0) + (handCenterPos-handCenterInit_)*scalefactor_;
 		}
 
 	}else

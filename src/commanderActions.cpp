@@ -38,7 +38,7 @@ Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const 
 		int numconfigs = numQuads_;
 		for(int ij=0; ij<numconfigs; ij++)
 		{
-
+			//initialization goes here
 		}
 
 	}
@@ -48,6 +48,14 @@ Eigen::VectorXd commander::getRefsForCircularFlight(const double zFlight, const 
 	}
 	return Eigen::Vector3d(9001,9001,9001);
 }
+
+
+//talks to gestureManager object. gestureManager manages all gesture objects and returns references based on input gesture
+void commander::processGesture(const int gestureIndex)
+{
+
+}
+
 
 
 /*

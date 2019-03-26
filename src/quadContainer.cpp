@@ -40,6 +40,9 @@ void quadContainer::odomCallback(const nav_msgs::Odometry &msg)
 	lastQuat_.y() = lastOdom_.pose.pose.orientation.y;
 	lastQuat_.z() = lastOdom_.pose.pose.orientation.z;
 	lastQuat_.w() = lastOdom_.pose.pose.orientation.w;
+	lastVel_(0) = lastOdom_.twist.twist.linear.x;
+	lastVel_(1) = lastOdom_.twist.twist.linear.y;
+	lastVel_(2) = lastOdom_.twist.twist.linear.z;
 }
 
 
@@ -55,6 +58,7 @@ void quadContainer::setInitPos(const Eigen::Vector3d &pos)
 	lastPos_(1) = lastOdom_.pose.pose.position.y;
 	lastPos_(2) = lastOdom_.pose.pose.position.z;
 	initPos_ = lastPos_;
+	lastVel_=Eigen::Vector3d::Zero();
 }
 
 
@@ -63,11 +67,29 @@ Eigen::Vector3d quadContainer::getPos()
 	return lastPos_;
 }
 
-
 void quadContainer::getPosPointer(Eigen::Vector3d *tmp)
 {
-	Eigen::Vector3d derp(lastPos_);
-	*tmp = derp;
+	Eigen::Vector3d ret(lastPos_);
+	*tmp = ret;
+}
+
+void quadContainer::getVelPointer(Eigen::Vector3d *tmp)
+{
+	Eigen::Vector3d ret(lastVel_);
+	*tmp = ret;
+}
+
+void quadContainer::getQuatPointer(Eigen::Quaterniond *tmp)
+{
+	Eigen::Quaterniond ret(lastQuat_);
+	*tmp = ret;
+}
+
+void quadContainer::getYawPointer(double *tmp)
+{
+	double ret = atan2(2.0*(lastQuat_.y()*lastQuat_.z() + lastQuat_.w()*lastQuat_.x()),
+		lastQuat_.w()*lastQuat_.w() - lastQuat_.x()*lastQuat_.x() - lastQuat_.y()*lastQuat_.y() + lastQuat_.z()*lastQuat_.z());
+	*tmp = ret;
 }
 
 

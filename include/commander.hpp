@@ -8,6 +8,7 @@
 #include <Eigen/Geometry>
 #include "quadContainer.hpp"
 #include <mg_msgs/PVA.h>
+#include <vicon_hand/handMsg.h>
 
 namespace handIn
 {
@@ -42,6 +43,7 @@ public:
 
 	//Gesture-based actions
 	Eigen::VectorXd getRefsForCircularFlight(const double zFlight, const double omega, const double turnRadius);
+	void processGesture(const int gestureIndex);
 
 private:
 	ros::NodeHandle nh_;

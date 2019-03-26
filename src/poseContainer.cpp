@@ -35,6 +35,7 @@ void poseContainer::createPoseSub(const int ij, const std::string quadname)
 	quadPoseSubs_[ij] = nh_.subscribe("/"+quadname+"/WRW/local_odom",10,&poseContainer::poseEventCallback,
 		  this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
 	namebox_[ij] = quadname+"/WRW/local_odom";
+    ROS_INFO("Subscriber created for %s",quadname.c_str());
 	return;
 }
 
@@ -109,6 +110,128 @@ int poseContainer::getIndexMatchingName(const std::string& stringToMatch,
     return nn;
 }
 
+
+/*
+OUTPUT RETURN MATS
+*/
+Eigen::Matrix<double,3,10> poseContainer::returnAllCurrentPos()
+{
+    Eigen::Vector3d tmppos;
+    Eigen::Matrix<double,3,10> retmat = Eigen::Matrix<double,3,10>::Zero();
+    for(int ij=0;ij<numQuads_;ij++)
+    {
+        if(hasInitPos_[ij])
+        {
+            quadContainerPtr_[ij]->getPosPointer(&tmppos);
+            retmat(0,ij)=tmppos(0);
+            retmat(1,ij)=tmppos(1);
+            retmat(2,ij)=tmppos(2);
+        }
+    }
+    return retmat;
+}
+Eigen::Matrix<double,6,10> poseContainer::returnAllCurrentPosVel()
+{
+    Eigen::Vector3d tmppos;
+    Eigen::Matrix<double,6,10> retmat = Eigen::Matrix<double,6,10>::Zero();
+    for(int ij=0;ij<numQuads_;ij++)
+    {
+        if(hasInitPos_[ij])
+        {
+            quadContainerPtr_[ij]->getPosPointer(&tmppos);
+            retmat(0,ij)=tmppos(0);
+            retmat(1,ij)=tmppos(1);
+            retmat(2,ij)=tmppos(2);
+            quadContainerPtr_[ij]->getVelPointer(&tmppos);
+            retmat(3,ij)=tmppos(0);
+            retmat(4,ij)=tmppos(1);
+            retmat(5,ij)=tmppos(2);
+        }
+    }
+    return retmat;
+}
+Eigen::Matrix<double,7,10> poseContainer::returnAllCurrentPVY()
+{
+    Eigen::Vector3d tmppos;
+    double tmpy;
+    Eigen::Matrix<double,7,10> retmat = Eigen::Matrix<double,7,10>::Zero();
+    for(int ij=0;ij<numQuads_;ij++)
+    {
+        if(hasInitPos_[ij])
+        {
+            quadContainerPtr_[ij]->getPosPointer(&tmppos);
+            retmat(0,ij)=tmppos(0);
+            retmat(1,ij)=tmppos(1);
+            retmat(2,ij)=tmppos(2);
+            quadContainerPtr_[ij]->getVelPointer(&tmppos);
+            retmat(3,ij)=tmppos(0);
+            retmat(4,ij)=tmppos(1);
+            retmat(5,ij)=tmppos(2);
+            quadContainerPtr_[ij]->getYawPointer(&tmpy);
+            retmat(6,ij)=tmpy;
+        }
+    }
+    return retmat;
+}
+void poseContainer::returnAllCurrentPos(Eigen::Matrix<double,3,10> *tmp)
+{
+    Eigen::Vector3d tmppos;
+    Eigen::Matrix<double,3,10> retmat = Eigen::Matrix<double,3,10>::Zero();
+    for(int ij=0;ij<numQuads_;ij++)
+    {
+        if(hasInitPos_[ij])
+        {
+            quadContainerPtr_[ij]->getPosPointer(&tmppos);
+            retmat(0,ij)=tmppos(0);
+            retmat(1,ij)=tmppos(1);
+            retmat(2,ij)=tmppos(2);
+        }
+    }
+    *tmp = retmat;
+}
+void poseContainer::returnAllCurrentPosVel(Eigen::Matrix<double,6,10> *tmp)
+{
+    Eigen::Vector3d tmppos;
+    Eigen::Matrix<double,6,10> retmat = Eigen::Matrix<double,6,10>::Zero();
+    for(int ij=0;ij<numQuads_;ij++)
+    {
+        if(hasInitPos_[ij])
+        {
+            quadContainerPtr_[ij]->getPosPointer(&tmppos);
+            retmat(0,ij)=tmppos(0);
+            retmat(1,ij)=tmppos(1);
+            retmat(2,ij)=tmppos(2);
+            quadContainerPtr_[ij]->getVelPointer(&tmppos);
+            retmat(3,ij)=tmppos(0);
+            retmat(4,ij)=tmppos(1);
+            retmat(5,ij)=tmppos(2);
+        }
+    }
+    *tmp = retmat;
+}
+void poseContainer::returnAllCurrentPVY(Eigen::Matrix<double,7,10> *tmp)
+{
+    Eigen::Vector3d tmppos;
+    double tmpy;
+    Eigen::Matrix<double,7,10> retmat = Eigen::Matrix<double,7,10>::Zero();
+    for(int ij=0;ij<numQuads_;ij++)
+    {
+        if(hasInitPos_[ij])
+        {
+            quadContainerPtr_[ij]->getPosPointer(&tmppos);
+            retmat(0,ij)=tmppos(0);
+            retmat(1,ij)=tmppos(1);
+            retmat(2,ij)=tmppos(2);
+            quadContainerPtr_[ij]->getVelPointer(&tmppos);
+            retmat(3,ij)=tmppos(0);
+            retmat(4,ij)=tmppos(1);
+            retmat(5,ij)=tmppos(2);
+            quadContainerPtr_[ij]->getYawPointer(&tmpy);
+            retmat(6,ij)=tmpy;
+        }
+    }
+    *tmp = retmat;
+}
 
 
 } //ns

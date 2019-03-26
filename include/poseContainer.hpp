@@ -22,6 +22,14 @@ public:
 	void createPoseSub (const int ij, const std::string quadname);
 	bool hasData(const int index);
 
+	//get poses from manager
+	Eigen::Matrix<double,3,10> returnAllCurrentPos();
+	Eigen::Matrix<double,6,10> returnAllCurrentPosVel();
+	Eigen::Matrix<double,7,10> returnAllCurrentPVY();
+	void returnAllCurrentPos(Eigen::Matrix<double,3,10> *tmp);
+	void returnAllCurrentPosVel(Eigen::Matrix<double,6,10> *tmp);
+	void returnAllCurrentPVY(Eigen::Matrix<double,7,10> *tmp);
+
 private:
 	void poseEventCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event);
 	int getIndexMatchingName(const std::string& stringToMatch, 

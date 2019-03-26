@@ -29,12 +29,15 @@ public:
 	bool getStatus();
 	//pointer-based getters
 	void getPosPointer(Eigen::Vector3d *tmp);
+	void getVelPointer(Eigen::Vector3d *tmp);
+	void getQuatPointer(Eigen::Quaterniond *tmp);
+	void getYawPointer(double *tmp);
 	void getStatusPointer(bool *tmp);
 
 private:
 	ros::NodeHandle nh_;
 	nav_msgs::Odometry lastOdom_;
-	Eigen::Vector3d lastPos_, initPos_;
+	Eigen::Vector3d lastPos_, initPos_, lastVel_;
 	Eigen::Quaterniond lastQuat_;
 	int quadIntIndex_;
 	std::string quadName_;
