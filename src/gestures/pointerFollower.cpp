@@ -128,5 +128,4 @@ Eigen::Matrix<double,7,10> pointerFollower::returnPosVelRefs(const Eigen::Vector
 }
 
 
-
 } //ns

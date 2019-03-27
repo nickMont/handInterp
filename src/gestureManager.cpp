@@ -10,11 +10,6 @@ gestureManager::gestureManager()
 
 void gestureManager::configure(const int numQuads)
 {
-	for(int ij=0; ij<10; ij++)
-	{
-		hasInitPos_[ij] = false;
-		hasPointer_[ij] = false;
-	}
 	numQuads_ = numQuads;
 
 	return;
@@ -22,57 +17,25 @@ void gestureManager::configure(const int numQuads)
 
 
 //pass location in memory of quad array
-void gestureManager::setPoseContainerPointer(const int ij, std::shared_ptr<handIn::quadContainer> quadptr)
+void pointerFollower::setQuadPointer(std::shared_ptr<handIn::poseContainer> quadptr)
 {
-	quadContainerPtr_[ij] = quadptr;
-	hasPointer_[ij] = true;
-}
-
-
-//only create subscribers that are needed
-void gestureManager::createPoseSub(const int ij, const std::string quadname)
-{
-	quadPoseSubs_[ij] = nh_.subscribe("/"+quadname+"/WRW/local_odom",10,&gestureManager::poseEventCallback,
-		  this, ros::TransportHints().unreliable().reliable().tcpNoDelay(true));
-	namebox_[ij] = quadname+"/WRW/local_odom";
-	return;
-}
-
-
-//use MessageEvent syntax to create one ROS callback for all pose topics
-void gestureManager::poseEventCallback(const ros::MessageEvent<nav_msgs::Odometry const>& event)
-{
-	 //extract message contents
-	 const nav_msgs::Odometry::ConstPtr& msg = event.getMessage();
-
-	//get topic name in callback by using messageevent syntax
-  	ros::M_string& header = event.getConnectionHeader();
-  	std::string publisherName = header.at("topic");
-  	//remove leading "/"
-  	publisherName = publisherName.substr(1,publisherName.length());
-	
-	//match publisher name to 
-  	int nk = getIndexMatchingName(publisherName,namebox_,numQuads_);
-
-  	if(nk==-1) //errors
-  	{return;}
-  	else if(!hasPointer_[nk])
-  	{ROS_INFO("Quad object missing!"); return;}
-
-  	if(!hasInitPos_[nk])
+    poseContainerPtr_ = quadptr;
+    hasPosePointer_ = true;
+    if(hasHandInitLoc_)
     {
-        hasInitPos_[nk] = true;
+        //dummyvar to prevent data mixup errors
+        Eigen::Matrix<double,3,10> tmp(Eigen::Matrix<double,3,10>::Zero());
+        poseContainerPtr_->returnAllCurrentPos(&tmp);
+        initConfig_ = tmp;
+
+        isInitialized_=true;
     }
-
-    quadContainerPtr_[nk]->setOdom(*msg);
-    return;
 }
 
 
-bool gestureManager::hasData(const int index)
-{
-  return hasInitPos_[index];
-}
+
+
+
 
 
 //get index of quadPointer from ros subscriber name to match objects in MessageEvent callback

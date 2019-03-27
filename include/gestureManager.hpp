@@ -5,6 +5,7 @@
 #include <iostream>
 #include <Eigen/Geometry>
 #include <pointerFollower.hpp>
+#include <poseContainer.hpp>
 
 namespace handIn
 {
@@ -15,9 +16,12 @@ public:
 	EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 
 	gestureManager();
+	void configure(const int numQuads);
+	void setQuadPointer(std::shared_ptr<handIn::poseContainer> quadptr);
 
 private:
 	pointerFollower pointerFollower_;
+	std::shared_ptr<handIn::poseContainer> poseContainerPtr_;
 
 };
 
